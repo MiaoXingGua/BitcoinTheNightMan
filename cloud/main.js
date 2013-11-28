@@ -5,8 +5,8 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 //var Market = AV.Object.extend("Market");
-
-
+var userFavicon = AV.Object.extend('userFavicon');
+var Installation = AV.Object.extend('_Installation');
 
 if (__production)
 {
@@ -55,6 +55,45 @@ var refreashMarket = function(coin1,coin2){
         success: function(httpResponse) {
 //                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
+
+            var lastPrice = resultInfo.last;
+
+            var maxQuery = new AV.Query(userFavicon);
+            maxQuery.equalTo('coin1', coin1);
+            maxQuery.equalTo('coin2', coin2);
+            maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
+
+            var minQuery = new AV.Query(userFavicon);
+            minQuery.equalTo('coin1', coin1);
+            minQuery.equalTo('coin2', coin2);
+            minQuery.lessThanOrEqualTo("minValue", lastPrice);
+
+            var mainQuery = AV.Query.or(maxQuery, minQuery);
+            mainQuery.find({
+                success: function(results) {
+
+//                    var userList = new Array();
+                    for (var userFav in results)
+                    {
+                        var user = results.get('user');
+                        var installationQuery = new AV.Query(Installation);
+                        installationQuery.equalTo('user', user);
+
+                        AV.Push.send({
+                            channels: [ "Public" ],
+                            where: installationQuery,
+                            data: {
+                                alert: "Public message"
+                            }
+                        });
+                    }
+
+                    // results contains a list of players that either have won a lot of games or won only a few games.
+                },
+                error: function(error) {
+                    // There was an error.
+                }
+            });
 
             if (resultInfo.result)
             {
