@@ -9,7 +9,7 @@ AV.Cloud.setInterval('market', 10, function(){
 
     AV.Cloud.httpRequest({
         url: 'https://cn.bter.com/api/1/ticker/btc_cny',
-        secureProtocol : 'SSLv2_method',
+        secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
             console.log(httpResponse.text);
         },
