@@ -1,0 +1,1 @@
+Cloud code project for Bitcoin The Night Man. https://cn.avoscloud.com/docs/cloud_code_guide.html
