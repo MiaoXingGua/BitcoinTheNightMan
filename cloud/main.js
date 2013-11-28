@@ -7,15 +7,26 @@ AV.Cloud.define("hello", function(request, response) {
 
 AV.Cloud.setInterval('asdasdmakersducygs', 10, function(){
 
-    AV.Cloud.httpRequest({
-        url: 'https://cn.bter.com/api/1/ticker/btc_cny',
-        secureProtocol : 'SSLv1_method',
-        success: function(httpResponse) {
-            console.log(httpResponse.text);
-        },
-        error: function(httpResponse) {
-            console.error(httpResponse.text);
+
+    try {
+        AV.Cloud.httpRequest({
+            url: 'https://cn.bter.com/api/1/ticker/btc_cny',
+            secureProtocol : 'SSLv1_method',
+            success: function(httpResponse) {
+                console.log(httpResponse.text);
+            },
+            error: function(httpResponse) {
+                console.error(httpResponse.text);
+            }
+        });
+    } catch (e) {
+        if (e instanceof EvalError) {
+            alert(e.name + ":" + e.message);
         }
-    });
+        else if (e instanceof RangeError) {
+            alert(e.name + ": " + e.message);
+        }
+        // etc
+    }
 });
 
