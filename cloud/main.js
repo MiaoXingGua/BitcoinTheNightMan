@@ -20,7 +20,7 @@ AV.Cloud.setInterval('asdasdmakersducygs', 10, function(){
             }
         });
     } catch (e) {
-        console.error(e);
+        console.error('xxxx');
     }
 });
 
