@@ -6,7 +6,9 @@ AV.Cloud.define("hello", function(request, response) {
 
 var Market = AV.Object.extend("Market");
 
-AV.Cloud.setInterval('refreash_market', 10, function(){
+if (__production)
+{
+    AV.Cloud.setInterval('refreash_market', 10, function(){
 
 
         AV.Cloud.httpRequest({
@@ -47,7 +49,9 @@ AV.Cloud.setInterval('refreash_market', 10, function(){
             }
         });
 
-});
+    });
+}
+
 
 
 
