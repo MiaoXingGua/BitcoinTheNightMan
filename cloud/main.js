@@ -5,7 +5,7 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 
-AV.Cloud.setInterval('market', 10, function(){
+AV.Cloud.setInterval('log_timer', 10, function(){
 
     AV.Cloud.httpRequest({
         url: 'https://cn.bter.com/api/1/ticker/btc_cny',
@@ -18,3 +18,4 @@ AV.Cloud.setInterval('market', 10, function(){
         }
     });
 });
+
