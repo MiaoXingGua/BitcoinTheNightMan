@@ -4,13 +4,13 @@ AV.Cloud.define("hello", function(request, response) {
   response.success("Hello world!");
 });
 
-var Market = AV.Object.extend("Market");
+//var Market = AV.Object.extend("Market");
 
 
 
 if (__production)
 {
-    AV.Cloud.setInterval('refreash_market', 3, function(){
+    AV.Cloud.setInterval('refreash_market', 9, function(){
 
         var myDate = new Date();
         var mytime=myDate.toLocaleTimeString();
@@ -58,7 +58,8 @@ var refreashMarket = function(coin1,coin2){
 
             if (resultInfo.result)
             {
-                var market = new AV.Object.extend(coin1+'_'+coin2);
+                var Market = AV.Object.extend(coin1+'_'+coin2);
+                var market = new Market();
                 market.set('last',resultInfo.last);
                 market.set('high',resultInfo.high);
                 market.set('low',resultInfo.low);
