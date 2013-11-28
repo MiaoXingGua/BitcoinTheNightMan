@@ -5,21 +5,18 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 
-AV.Cloud.setInterval('abc', 10, function(){
+AV.Cloud.setInterval('market', 10, function(){
 
-//    try {
         AV.Cloud.httpRequest({
             url: 'http://cn.bter.com/api/1/ticker/btc_cny',
 //            secureProtocol : 'SSLv1_method',
             success: function(httpResponse) {
-                console.log(httpResponse.text);
+                console.dir(httpResponse);
             },
             error: function(httpResponse) {
                 console.error(httpResponse.text);
             }
         });
-//    } catch (error) {
-//        console.dir(error);
-//    }
+
 });
 
