@@ -14,7 +14,7 @@ if (__production)
 
         var myDate = new Date();
         var mytime=myDate.toLocaleTimeString();
-        consolo.log(myDate.toLocaleString( ));
+        console.log(myDate.toLocaleString( ));
 
     });
 }
