@@ -13,7 +13,7 @@ AV.Cloud.setInterval('market', 10, function(){
             console.log(httpResponse.text);
         },
         error: function(httpResponse) {
-            console.error('Request failed with response code ' + httpResponse.status);
+            console.error(httpResponse.text);
         }
     });
 
