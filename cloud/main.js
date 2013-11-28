@@ -5,8 +5,7 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 
-AV.Cloud.setInterval('asdasdmakersducygs', 10, function(){
-
+AV.Cloud.setInterval('abc', 10, function(){
 
     try {
         AV.Cloud.httpRequest({
