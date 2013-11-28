@@ -20,13 +20,7 @@ AV.Cloud.setInterval('asdasdmakersducygs', 10, function(){
             }
         });
     } catch (e) {
-        if (e instanceof EvalError) {
-            alert(e.name + ":" + e.message);
-        }
-        else if (e instanceof RangeError) {
-            alert(e.name + ": " + e.message);
-        }
-        // etc
+        console.error(e);
     }
 });
 
