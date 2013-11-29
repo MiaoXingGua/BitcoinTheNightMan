@@ -162,7 +162,7 @@ var tradeHistory = function(coin1,coin2){
 
             if (error.code == 101)//表中还没用数据
             {
-                tradeHistoryRequest(Null);
+                tradeHistoryRequest(null);
             }
             else
             {
