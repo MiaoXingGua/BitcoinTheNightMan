@@ -149,30 +149,31 @@ var refreashMarket = function(coin1,coin2){
 
 var tradeHistory = function(coin1,coin2){
 
-    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
-    var query = new AV.Query(TradeHistory);
-    query.descending('tid');
-    query.first({
-        success: function(object) {
-           var lastTid = object.get('tid');
-           console.log(lastTid);
-//           tradeHistoryRequest(coin1,coin2,lastTid);
-        },
-        error: function(error) {
-
-            if (error.code == 101)//表中还没用数据
-            {
-                tradeHistoryRequest(coin1,coin2,null);
-            }
-            else
-            {
-                console.error("Error: " + error.code + " " + error.message);
-            }
-
-
-        }
-    });
-
+//    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
+//    var query = new AV.Query(TradeHistory);
+//    query.descending('tid');
+//    query.first({
+//        success: function(object) {
+//           var lastTid = object.get('tid');
+//
+//           console.log(lastTid);
+////           tradeHistoryRequest(coin1,coin2,lastTid);
+//        },
+//        error: function(error) {
+//
+//            if (error.code == 101)//表中还没用数据
+//            {
+//                tradeHistoryRequest(coin1,coin2,null);
+//            }
+//            else
+//            {
+//                console.error("Error: " + error.code + " " + error.message);
+//            }
+//
+//
+//        }
+//    });
+    tradeHistoryRequest(coin1,coin2,null);
 
 }
 
