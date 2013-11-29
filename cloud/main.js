@@ -155,7 +155,7 @@ var tradeHistory = function(coin1,coin2){
     query.first({
         success: function(object) {
            var lastTid = object.get('tid');
-
+           console.log(lastTid);
            tradeHistoryRequest(coin1,coin2,lastTid);
         },
         error: function(error) {
@@ -192,6 +192,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
+            console.dir(resultInfo);
 
             var lastPrice = resultInfo.price;
 
@@ -235,6 +236,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     // There was an error.
                 }
             });
+
+
 
             if (resultInfo.result)
             {
