@@ -52,7 +52,7 @@ if (__production)
     AV.Cloud.setInterval('trade_history', 9, function(){
 
         console.log('trade_history');
-        tradeHistory('btc','cny');
+//        tradeHistory('btc','cny');
 
     });
 }
@@ -177,7 +177,7 @@ var tradeHistory = function(coin1,coin2){
 }
 
 AV.Cloud.define("test", function(request, response) {
-    tradeHistoryRequest(coin1,coin2,null);
+    tradeHistoryRequest('btc','cny',null);
 });
 
 
