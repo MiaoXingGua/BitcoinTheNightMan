@@ -12,11 +12,11 @@ if (__production)
 {
     AV.Cloud.setInterval('refreash_market', 9, function(){
 
-        var myDate = new Date();
-        var mytime=myDate.toLocaleTimeString();
-        console.log(myDate.toLocaleString());
+//        var myDate = new Date();
+//        var mytime=myDate.toLocaleTimeString();
+//        console.log(myDate.toLocaleString());
 
-//        refreashMarket('btc','cny');
+        refreashMarket('btc','cny');
 //        refreashMarket('ltc','cny');
 //        refreashMarket('ftc','cny');
 //        refreashMarket('frc','cny');
@@ -48,6 +48,8 @@ if (__production)
 }
 
 var refreashMarket = function(coin1,coin2){
+
+    console.log(coin1+'_'+coin2);
 
     AV.Cloud.httpRequest({
         url: 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2,
