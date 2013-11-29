@@ -156,10 +156,33 @@ var tradeHistory = function(coin1,coin2){
         success: function(object) {
            var lastTid = object.set('tid');
 
-            AV.Cloud.httpRequest({
-                url: 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid,
+           tradeHistoryRequest(lastTid);
+        },
+        error: function(error) {
+
+            if (error.code == 101)//表中还没用数据
+            {
+                tradeHistoryRequest(Null);
+            }
+            else
+            {
+                console.error("Error: " + error.code + " " + error.message);
+            }
+
+
+        }
+    });
+
+
+}
+
+
+var tradeHistoryRequest = function(lastTid){
+
+    AV.Cloud.httpRequest({
+        url: 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid,
 //            secureProtocol : 'SSLv1_method',
-                success: function(httpResponse) {
+        success: function(httpResponse) {
 
 //                    console.log(++i);
 
@@ -209,41 +232,35 @@ var tradeHistory = function(coin1,coin2){
                 }
             });
 
-                    if (resultInfo.result)
-                    {
-                        var tradeHistory = new TradeHistory();
-                        tradeHistory.set('date',resultInfo.date);
-                        tradeHistory.set('price',resultInfo.price);
-                        tradeHistory.set('amount',resultInfo.amount);
-                        tradeHistory.set('tid',resultInfo.tid);
-                        tradeHistory.set('sell',resultInfo.sell);
-                        tradeHistory.set('type',resultInfo.type);
-                        tradeHistory.set('coin1',coin1);
-                        tradeHistory.set('coin2',coin2);
-                        tradeHistory.save(null, {
-                            success: function(tradeHistory) {
-                                // Execute any logic that should take place after the object is saved.
-                                console.log('New object created with objectId: ' + tradeHistory.id);
-                            },
-                            error: function(tradeHistory, error) {
-                                // Execute any logic that should take place if the save fails.
-                                // error is a AV.Error with an error code and description.
-                                console.error('Failed to create new object, with error code: ' + error.description);
-                            }
-                        });
+            if (resultInfo.result)
+            {
+                var tradeHistory = new TradeHistory();
+                tradeHistory.set('date',resultInfo.date);
+                tradeHistory.set('price',resultInfo.price);
+                tradeHistory.set('amount',resultInfo.amount);
+                tradeHistory.set('tid',resultInfo.tid);
+                tradeHistory.set('sell',resultInfo.sell);
+                tradeHistory.set('type',resultInfo.type);
+                tradeHistory.set('coin1',coin1);
+                tradeHistory.set('coin2',coin2);
+                tradeHistory.save(null, {
+                    success: function(tradeHistory) {
+                        // Execute any logic that should take place after the object is saved.
+                        console.log('New object created with objectId: ' + tradeHistory.id);
+                    },
+                    error: function(tradeHistory, error) {
+                        // Execute any logic that should take place if the save fails.
+                        // error is a AV.Error with an error code and description.
+                        console.error('Failed to create new object, with error code: ' + error.description);
                     }
-                },
-                error: function(httpResponse) {
-                    console.log('失败');
-//            console.error(httpResponse.text);
-                }
-            });
+                });
+            }
         },
-        error: function(error) {
-            console.error("Error: " + error.code + " " + error.message);
+        error: function(httpResponse) {
+            console.log('失败');
+//            console.error(httpResponse.text);
         }
     });
-
 
 }
 
