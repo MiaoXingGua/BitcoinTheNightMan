@@ -8,6 +8,8 @@ AV.Cloud.define("hello", function(request, response) {
 var userFavicon = AV.Object.extend('userFavicon');
 var Installation = AV.Object.extend('_Installation');
 
+var i = 0;
+
 if (__production)
 {
     AV.Cloud.setInterval('refreash_market', 1, function(){
@@ -57,7 +59,7 @@ var refreashMarket = function(coin1,coin2){
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-            console.log('成功');
+            console.log(++i);
 
 //                console.dir(JSON.parse(httpResponse.text));
 //            var resultInfo = JSON.parse(httpResponse.text);
