@@ -132,11 +132,23 @@ var refreashMarket = function(coin1,coin2){
     });
 }
 
+//生成guid
+function newGuid()
+{
+    var guid = "";
+    for (var i = 1; i <= 32; i++){
+        var n = Math.floor(Math.random()*16.0).toString(16);
+        guid += n;
+        if((i==8)||(i==12)||(i==16)||(i==20))
+            guid += "-";
+    }
+    return guid;
+}
 
 //Phone注册
 AV.Cloud.define('register', function(request, response) {
 
-    console.log('Phone注册');
+    console.log('注册');
 
 //    register(request,response,10,null,'phone');
     register(request,response,10,null);
