@@ -335,8 +335,8 @@ var register = function(request,response,count,error)
         user.set("username", username);
         user.set("password", username);
 
-        var userFavicon = new UserFavicon();
-        user.set('userFavicon',userFavicon);
+//        var userFavicon = new UserFavicon();
+//        user.set('userFavicon',userFavicon);
 //        user.set("email", email);
 //        user.set('type', type);
 
