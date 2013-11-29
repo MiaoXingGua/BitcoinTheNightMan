@@ -156,13 +156,13 @@ var tradeHistory = function(coin1,coin2){
         success: function(object) {
            var lastTid = object.set('tid');
 
-           tradeHistoryRequest(lastTid);
+           tradeHistoryRequest(coin1,coin2,lastTid);
         },
         error: function(error) {
 
             if (error.code == 101)//表中还没用数据
             {
-                tradeHistoryRequest(null);
+                tradeHistoryRequest(coin1,coin2,null);
             }
             else
             {
@@ -177,7 +177,7 @@ var tradeHistory = function(coin1,coin2){
 }
 
 
-var tradeHistoryRequest = function(lastTid){
+var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
     AV.Cloud.httpRequest({
         url: 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid,
