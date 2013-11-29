@@ -200,7 +200,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 //                console.dir(resultInfo.data[0]);
                 for (var i=0;i<resultInfo.data.length;i++)
                 {
-                    console.dir(data[i]);
+                    console.dir(resultInfo.data[i]);
 
 //                    var tradeHistory = new TradeHistory();
 //                    tradeHistory.set('date',data.date);
@@ -326,6 +326,9 @@ var register = function(request,response,count,error)
         var user = new AV.User();
         user.set("username", username);
         user.set("password", username);
+
+        var userFavicon = new UserFavicon();
+        user.set('userFavicon',userFavicon);
 //        user.set("email", email);
 //        user.set('type', type);
 
