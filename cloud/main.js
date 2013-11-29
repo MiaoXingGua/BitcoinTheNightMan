@@ -12,36 +12,36 @@ if (__production)
 {
     AV.Cloud.setInterval('refreash_market', 9, function(){
 
-//        var myDate = new Date();
-//        var mytime=myDate.toLocaleTimeString();
-//        console.log(myDate.toLocaleString());
+        var myDate = new Date();
+        var mytime=myDate.toLocaleTimeString();
+        console.log(myDate.toLocaleString());
 
-        refreashMarket('btc','cny');
-        refreashMarket('ltc','cny');
-        refreashMarket('ftc','cny');
-        refreashMarket('frc','cny');
-        refreashMarket('ppc','cny');
-        refreashMarket('trc','cny');
-        refreashMarket('wdc','cny');
-        refreashMarket('yac','cny');
-        refreashMarket('cnc','cny');
-        refreashMarket('bqc','cny');
-        refreashMarket('ifc','cny');
-        refreashMarket('zcc','cny');
-        refreashMarket('cmc','cny');
-        refreashMarket('jry','cny');
-        refreashMarket('xpm','cny');
-        refreashMarket('pts','cny');
-        refreashMarket('tag','cny');
-        refreashMarket('tix','cny');
-        refreashMarket('src','cny');
-        refreashMarket('mec','cny');
-        refreashMarket('nmc','cny');
-        refreashMarket('qrk','cny');
-        refreashMarket('btb','cny');
-        refreashMarket('exc','cny');
-        refreashMarket('dtc','cny');
-        refreashMarket('bsc','cny');
+//        refreashMarket('btc','cny');
+//        refreashMarket('ltc','cny');
+//        refreashMarket('ftc','cny');
+//        refreashMarket('frc','cny');
+//        refreashMarket('ppc','cny');
+//        refreashMarket('trc','cny');
+//        refreashMarket('wdc','cny');
+//        refreashMarket('yac','cny');
+//        refreashMarket('cnc','cny');
+//        refreashMarket('bqc','cny');
+//        refreashMarket('ifc','cny');
+//        refreashMarket('zcc','cny');
+//        refreashMarket('cmc','cny');
+//        refreashMarket('jry','cny');
+//        refreashMarket('xpm','cny');
+//        refreashMarket('pts','cny');
+//        refreashMarket('tag','cny');
+//        refreashMarket('tix','cny');
+//        refreashMarket('src','cny');
+//        refreashMarket('mec','cny');
+//        refreashMarket('nmc','cny');
+//        refreashMarket('qrk','cny');
+//        refreashMarket('btb','cny');
+//        refreashMarket('exc','cny');
+//        refreashMarket('dtc','cny');
+//        refreashMarket('bsc','cny');
 
 
     });
