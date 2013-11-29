@@ -180,8 +180,11 @@ var tradeHistory = function(coin1,coin2){
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
     var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
+    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid;
+    console.log(url);
+
     AV.Cloud.httpRequest({
-        url: 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid,
+        url: url,
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
