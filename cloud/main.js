@@ -156,13 +156,13 @@ var tradeHistory = function(coin1,coin2){
         success: function(object) {
            var lastTid = object.get('tid');
            console.log(lastTid);
-           tradeHistoryRequest(coin1,coin2,lastTid);
+//           tradeHistoryRequest(coin1,coin2,lastTid);
         },
         error: function(error) {
 
             if (error.code == 101)//表中还没用数据
             {
-                tradeHistoryRequest(coin1,coin2,null);
+//                tradeHistoryRequest(coin1,coin2,null);
             }
             else
             {
