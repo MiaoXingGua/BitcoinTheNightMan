@@ -176,7 +176,11 @@ var tradeHistory = function(coin1,coin2){
 
 }
 
-tradeHistoryRequest(coin1,coin2,null);
+AV.Cloud.define("test", function(request, response) {
+    tradeHistoryRequest(coin1,coin2,null);
+});
+
+
 
 
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
