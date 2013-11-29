@@ -193,7 +193,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
-            console.dir(resultInfo);
+            console.log(resultInfo.price);
 
             var lastPrice = resultInfo.price;
 
