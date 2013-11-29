@@ -12,9 +12,9 @@ if (__production)
 {
     AV.Cloud.setInterval('refreash_market', 9, function(){
 
-        var myDate = new Date();
-        var mytime=myDate.toLocaleTimeString();
-        console.log(myDate.toLocaleString());
+//        var myDate = new Date();
+//        var mytime=myDate.toLocaleTimeString();
+//        console.log(myDate.toLocaleString());
 
         refreashMarket('btn','cny');
         refreashMarket('ltc','cny');
@@ -59,13 +59,17 @@ var refreashMarket = function(coin1,coin2){
             var lastPrice = resultInfo.last;
 
             var maxQuery = new AV.Query(userFavicon);
-            maxQuery.equalTo('coin1', coin1);
-            maxQuery.equalTo('coin2', coin2);
+            maxQuery.equalTo('coin.coin1', coin1);
+            maxQuery.equalTo('coin.coin2', coin2);
+            maxQuery.doesNotExist('maxValue');
+            maxQuery.notEqualTo('maxValue', 0);
             maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
 
             var minQuery = new AV.Query(userFavicon);
-            minQuery.equalTo('coin1', coin1);
-            minQuery.equalTo('coin2', coin2);
+            minQuery.equalTo('coin.coin1', coin1);
+            minQuery.equalTo('coin.coin2', coin2);
+            minQuery.doesNotExist('minValue');
+            minQuery.notEqualTo('minValue', 0);
             minQuery.lessThanOrEqualTo("minValue", lastPrice);
 
             var mainQuery = AV.Query.or(maxQuery, minQuery);
@@ -129,3 +133,59 @@ var refreashMarket = function(coin1,coin2){
 }
 
 
+//Phone注册
+AV.Cloud.define('register', function(request, response) {
+
+    console.log('Phone注册');
+
+//    register(request,response,10,null,'phone');
+    register(request,response,10,null);
+});
+
+
+var register = function(request,response,count,error)
+{
+    if (count<=0) response.error(error);
+
+    var username = request.params.guid;
+
+    console.log(username);
+
+    if (!username)
+    {
+        username = newGuid();
+    }
+
+//    var email = username + "@" + "qq" + ".com";
+
+    if (username)
+    {
+        //创建用户关系
+//        var userRelation = new UserRelation();
+//        userRelation.save().then(function(userRelation){
+
+        var user = new AV.User();
+        user.set("username", username);
+        user.set("password", username);
+//        user.set("email", email);
+//        user.set('type', type);
+
+        user.signUp(null, {
+            success: function(user) {
+//                console.log('注册3');
+                var dict = {'guid':user.get('username')};
+
+                console.dir(dict);
+
+                response.success(dict);
+            },
+            error: function(user, error) {
+//                console.log('注册5');
+
+                response.error(error);
+            }
+        });
+//        });
+
+    }
+}
