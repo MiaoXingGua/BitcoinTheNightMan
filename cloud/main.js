@@ -17,6 +17,7 @@ if (__production)
 //        console.log(myDate.toLocaleString());
 
         refreashMarket('btc','cny');
+        refreashMarket('btb','cny');
         refreashMarket('ltc','cny');
         refreashMarket('ftc','cny');
         refreashMarket('frc','cny');
