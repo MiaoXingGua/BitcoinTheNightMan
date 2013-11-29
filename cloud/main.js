@@ -10,7 +10,7 @@ var Installation = AV.Object.extend('_Installation');
 
 if (__production)
 {
-    AV.Cloud.setInterval('refreash_market', 0.5, function(){
+    AV.Cloud.setInterval('refreash_market', 1, function(){
 
 //        var myDate = new Date();
 //        var mytime=myDate.toLocaleTimeString();
