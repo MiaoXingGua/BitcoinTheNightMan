@@ -149,31 +149,29 @@ var refreashMarket = function(coin1,coin2){
 
 var tradeHistory = function(coin1,coin2){
 
-//    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
-//    var query = new AV.Query(TradeHistory);
-//    query.descending('tid');
-//    query.first({
-//        success: function(object) {
-//           var lastTid = object.get('tid');
-//
-//           console.log(lastTid);
-////           tradeHistoryRequest(coin1,coin2,lastTid);
-//        },
-//        error: function(error) {
-//
-//            if (error.code == 101)//表中还没用数据
-//            {
-//                tradeHistoryRequest(coin1,coin2,null);
-//            }
-//            else
-//            {
-//                console.error("Error: " + error.code + " " + error.message);
-//            }
-//
-//
-//        }
-//    });
-    tradeHistoryRequest(coin1,coin2,null);
+    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
+    var query = new AV.Query(TradeHistory);
+    query.descending('tid');
+    query.first({
+        success: function(object) {
+           var lastTid = object.get('tid');
+            console.log('tid');
+           console.log(lastTid);
+           tradeHistoryRequest(coin1,coin2,lastTid);
+        },
+        error: function(error) {
+
+            if (error.code == 101)//表中还没用数据
+            {
+                tradeHistoryRequest(coin1,coin2,null);
+            }
+            else
+            {
+                console.error("Error: " + error.code + " " + error.message);
+            }
+        }
+    });
+//    tradeHistoryRequest(coin1,coin2,null);
 
 }
 
@@ -193,77 +191,81 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
-            console.dir(resultInfo);
-            console.log(resultInfo.price);
+//            console.dir(resultInfo);
+//            console.log(resultInfo.data);
 
-//            var lastPrice = resultInfo.price;
-//
-//            var maxQuery = new AV.Query(UserFavicon);
-//            maxQuery.equalTo('coin.coin1', coin1);
-//            maxQuery.equalTo('coin.coin2', coin2);
-//            maxQuery.doesNotExist('maxValue');
-//            maxQuery.notEqualTo('maxValue', 0);
-//            maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-//
-//            var minQuery = new AV.Query(UserFavicon);
-//            minQuery.equalTo('coin.coin1', coin1);
-//            minQuery.equalTo('coin.coin2', coin2);
-//            minQuery.doesNotExist('minValue');
-//            minQuery.notEqualTo('minValue', 0);
-//            minQuery.lessThanOrEqualTo("minValue", lastPrice);
-//
-//            var mainQuery = AV.Query.or(maxQuery, minQuery);
-//            mainQuery.find({
-//                success: function(results) {
-//
-////                    var userList = new Array();
-//                    for (var userFav in results)
-//                    {
-//                        var user = results.get('user');
-//                        var installationQuery = new AV.Query(Installation);
-//                        installationQuery.equalTo('user', user);
-//
-//                        AV.Push.send({
-//                            channels: [ "Public" ],
-//                            where: installationQuery,
-//                            data: {
-//                                alert: "Public message"
-//                            }
-//                        });
-//                    }
-//
-//                    // results contains a list of players that either have won a lot of games or won only a few games.
-//                },
-//                error: function(error) {
-//                    // There was an error.
-//                }
-//            });
-//
-//
-//
-//            if (resultInfo.result)
-//            {
-//                var tradeHistory = new TradeHistory();
-//                tradeHistory.set('date',resultInfo.date);
-//                tradeHistory.set('price',resultInfo.price);
-//                tradeHistory.set('amount',resultInfo.amount);
-//                tradeHistory.set('tid',resultInfo.tid);
-//                tradeHistory.set('sell',resultInfo.sell);
-//                tradeHistory.set('type',resultInfo.type);
-//                tradeHistory.set('coin1',coin1);
-//                tradeHistory.set('coin2',coin2);
-//                tradeHistory.save(null, {
-//                    success: function(tradeHistory) {
-//                        // Execute any logic that should take place after the object is saved.
-//                        console.log('New object created with objectId: ' + tradeHistory.id);
-//                    },
-//                    error: function(tradeHistory, error) {
-//                        // Execute any logic that should take place if the save fails.
-//                        // error is a AV.Error with an error code and description.
-//                        console.error('Failed to create new object, with error code: ' + error.description);
-//                    }
-//                });
-//            }
+            var lastPrice = resultInfo.price;
+
+            var maxQuery = new AV.Query(UserFavicon);
+            maxQuery.equalTo('coin.coin1', coin1);
+            maxQuery.equalTo('coin.coin2', coin2);
+            maxQuery.doesNotExist('maxValue');
+            maxQuery.notEqualTo('maxValue', 0);
+            maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
+
+            var minQuery = new AV.Query(UserFavicon);
+            minQuery.equalTo('coin.coin1', coin1);
+            minQuery.equalTo('coin.coin2', coin2);
+            minQuery.doesNotExist('minValue');
+            minQuery.notEqualTo('minValue', 0);
+            minQuery.lessThanOrEqualTo("minValue", lastPrice);
+
+            var mainQuery = AV.Query.or(maxQuery, minQuery);
+            mainQuery.find({
+                success: function(results) {
+
+//                    var userList = new Array();
+                    for (var userFav in results)
+                    {
+                        var user = results.get('user');
+                        var installationQuery = new AV.Query(Installation);
+                        installationQuery.equalTo('user', user);
+
+                        AV.Push.send({
+                            channels: [ "Public" ],
+                            where: installationQuery,
+                            data: {
+                                alert: "Public message"
+                            }
+                        });
+                    }
+
+                    // results contains a list of players that either have won a lot of games or won only a few games.
+                },
+                error: function(error) {
+                    // There was an error.
+                }
+            });
+
+
+
+            if (resultInfo.result)
+            {
+                for (var data in resultInfo.data)
+                {
+                    var tradeHistory = new TradeHistory();
+                    tradeHistory.set('date',data.date);
+                    tradeHistory.set('price',data.price);
+                    tradeHistory.set('amount',data.amount);
+                    tradeHistory.set('tid',data.tid);
+                    tradeHistory.set('sell',data.sell);
+                    tradeHistory.set('type',data.type);
+                    tradeHistory.set('coin1',coin1);
+                    tradeHistory.set('coin2',coin2);
+                    tradeHistory.save(null, {
+                        success: function(tradeHistory) {
+                            // Execute any logic that should take place after the object is saved.
+                            console.log('New object created with objectId: ' + tradeHistory.id);
+                        },
+                        error: function(tradeHistory, error) {
+                            // Execute any logic that should take place if the save fails.
+                            // error is a AV.Error with an error code and description.
+                            console.error('Failed to create new object, with error code: ' + error.description);
+                        }
+                    });
+                }
+
+            }
         },
         error: function(httpResponse) {
             console.log('失败');
