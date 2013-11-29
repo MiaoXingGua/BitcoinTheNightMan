@@ -154,7 +154,7 @@ var tradeHistory = function(coin1,coin2){
     query.descending('tid');
     query.first({
         success: function(object) {
-           var lastTid = object.set('tid');
+           var lastTid = object.get('tid');
 
            tradeHistoryRequest(coin1,coin2,lastTid);
         },
