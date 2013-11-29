@@ -179,6 +179,7 @@ var tradeHistory = function(coin1,coin2){
 
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
+    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
     AV.Cloud.httpRequest({
         url: 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid,
 //            secureProtocol : 'SSLv1_method',
