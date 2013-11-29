@@ -16,7 +16,7 @@ if (__production)
 //        var mytime=myDate.toLocaleTimeString();
 //        console.log(myDate.toLocaleString());
 
-        refreashMarket('btn','cny');
+        refreashMarket('btc','cny');
         refreashMarket('ltc','cny');
         refreashMarket('ftc','cny');
         refreashMarket('frc','cny');
