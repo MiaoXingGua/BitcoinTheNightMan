@@ -51,6 +51,7 @@ if (__production)
 
     AV.Cloud.setInterval('trade_history', 9, function(){
 
+        cosole.log('trade_history');
         tradeHistory('btc','cny');
 
     });
