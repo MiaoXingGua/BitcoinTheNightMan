@@ -194,14 +194,13 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 //            console.dir(resultInfo);
 //            console.log(resultInfo.data);
 
-            console.dir(resultInfo);
+//            console.dir(resultInfo);
             if (resultInfo.result)
             {
-                console.dir(resultInfo.data[0]);
-                for (var data in resultInfo.data)
+//                console.dir(resultInfo.data[0]);
+                for (var i=0;i<resultInfo.data.length;i++)
                 {
-
-//                    console.dir(data);
+                    console.dir(data[i]);
 
 //                    var tradeHistory = new TradeHistory();
 //                    tradeHistory.set('date',data.date);
