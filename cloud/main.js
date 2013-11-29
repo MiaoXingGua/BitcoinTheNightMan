@@ -161,7 +161,7 @@ var tradeHistory = function(coin1,coin2){
 //            secureProtocol : 'SSLv1_method',
                 success: function(httpResponse) {
 
-                    console.log(++i);
+//                    console.log(++i);
 
 //                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
@@ -240,7 +240,7 @@ var tradeHistory = function(coin1,coin2){
             });
         },
         error: function(error) {
-            alert("Error: " + error.code + " " + error.message);
+            console.error("Error: " + error.code + " " + error.message);
         }
     });
 
