@@ -8,9 +8,6 @@ AV.Cloud.define("hello", function(request, response) {
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 
-
-
-
 if (__production)
 {
     var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
@@ -59,7 +56,7 @@ if (__production)
 
     });
 
-    AV.Cloud.setInterval('trade_history', 1, function(){
+    AV.Cloud.setInterval('trade_history', 2, function(){
 
         console.log('trade_history');
 
