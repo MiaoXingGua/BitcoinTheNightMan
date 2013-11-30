@@ -223,7 +223,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //                dataList.sort(function(data1,data2){return data1.tid>data2.tid?1:-1});
 //                console.dir(dataList);
-                console.log(type(dataList));
+                console.log(typeof(dataList));
                 console.log(dataList.length);
 
 //                var dataCount = dataList.length;
