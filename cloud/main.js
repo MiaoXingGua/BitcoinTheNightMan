@@ -237,76 +237,77 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
             if (resultInfo.result)
             {
                 var dataList = resultInfo.data;
+                console.log(dataList.lenght);
 
-                for (var i=0;i<dataList.length;i++)
-                {
-                    var data = dataList[i];
-
-                    var tradeHistory = new TradeHistory();
-                    tradeHistory.set('date',data.date);
-                    tradeHistory.set('price',data.price);
-                    tradeHistory.set('amount',data.amount);
-                    tradeHistory.set('tid',data.tid);
-                    tradeHistory.set('type',data.type);
-                    tradeHistory.set('coin1',coin1);
-                    tradeHistory.set('coin2',coin2);
-                    tradeHistory.save(null, {
-                        success: function(tradeHistory) {
-
-                            console.log('New object created with tid: ' + tradeHistory.get('tid'));
-
-                        },
-                        error: function(tradeHistory, error) {
-
-                            console.error('Tid:'+tradeHistory.get('tid')+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
-                        }
-                    });
-
-
-                    var lastPrice = data.price;
-
-                    var maxQuery = new AV.Query(UserFavicon);
-                    maxQuery.equalTo('coin.coin1', coin1);
-                    maxQuery.equalTo('coin.coin2', coin2);
-                    maxQuery.doesNotExist('maxValue');
-                    maxQuery.notEqualTo('maxValue', 0);
-                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-
-                    var minQuery = new AV.Query(UserFavicon);
-                    minQuery.equalTo('coin.coin1', coin1);
-                    minQuery.equalTo('coin.coin2', coin2);
-                    minQuery.doesNotExist('minValue');
-                    minQuery.notEqualTo('minValue', 0);
-                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
-
-                    var mainQuery = AV.Query.or(maxQuery, minQuery);
-                    mainQuery.find({
-                        success: function(results) {
-
-//                    var userList = new Array();
-                            for (var userFav in results)
-                            {
-                                var user = results.get('user');
-                                var installationQuery = new AV.Query(Installation);
-                                installationQuery.equalTo('user', user);
-
-                                AV.Push.send({
-                                    channels: [ "Public" ],
-                                    where: installationQuery,
-                                    data: {
-                                        alert: "Public message"
-                                    }
-                                });
-                            }
-
-                            // results contains a list of players that either have won a lot of games or won only a few games.
-                        },
-                        error: function(error) {
-                            // There was an error.
-
-                        }
-                    });
-                }
+//                for (var i=0;i<dataList.length;i++)
+//                {
+//                    var data = dataList[i];
+//
+//                    var tradeHistory = new TradeHistory();
+//                    tradeHistory.set('date',data.date);
+//                    tradeHistory.set('price',data.price);
+//                    tradeHistory.set('amount',data.amount);
+//                    tradeHistory.set('tid',data.tid);
+//                    tradeHistory.set('type',data.type);
+//                    tradeHistory.set('coin1',coin1);
+//                    tradeHistory.set('coin2',coin2);
+//                    tradeHistory.save(null, {
+//                        success: function(tradeHistory) {
+//
+//                            console.log('New object created with tid: ' + tradeHistory.get('tid'));
+//
+//                        },
+//                        error: function(tradeHistory, error) {
+//
+//                            console.error('Tid:'+tradeHistory.get('tid')+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+//                        }
+//                    });
+//
+//
+//                    var lastPrice = data.price;
+//
+//                    var maxQuery = new AV.Query(UserFavicon);
+//                    maxQuery.equalTo('coin.coin1', coin1);
+//                    maxQuery.equalTo('coin.coin2', coin2);
+//                    maxQuery.doesNotExist('maxValue');
+//                    maxQuery.notEqualTo('maxValue', 0);
+//                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
+//
+//                    var minQuery = new AV.Query(UserFavicon);
+//                    minQuery.equalTo('coin.coin1', coin1);
+//                    minQuery.equalTo('coin.coin2', coin2);
+//                    minQuery.doesNotExist('minValue');
+//                    minQuery.notEqualTo('minValue', 0);
+//                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
+//
+//                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+//                    mainQuery.find({
+//                        success: function(results) {
+//
+////                    var userList = new Array();
+//                            for (var userFav in results)
+//                            {
+//                                var user = results.get('user');
+//                                var installationQuery = new AV.Query(Installation);
+//                                installationQuery.equalTo('user', user);
+//
+//                                AV.Push.send({
+//                                    channels: [ "Public" ],
+//                                    where: installationQuery,
+//                                    data: {
+//                                        alert: "Public message"
+//                                    }
+//                                });
+//                            }
+//
+//                            // results contains a list of players that either have won a lot of games or won only a few games.
+//                        },
+//                        error: function(error) {
+//                            // There was an error.
+//
+//                        }
+//                    });
+//                }
             }
 
         },
