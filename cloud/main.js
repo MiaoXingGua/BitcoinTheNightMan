@@ -237,6 +237,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
             if (resultInfo.result)
             {
                 var dataList = resultInfo.data;
+                console.log(typeof(dataList));
                 console.log(dataList.lenght);
 
 //                for (var i=0;i<dataList.length;i++)
