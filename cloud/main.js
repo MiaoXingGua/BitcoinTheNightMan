@@ -58,7 +58,7 @@ if (__production)
 
     AV.Cloud.setInterval('trade_history', 1, function(){
 
-//        console.log('trade_history');
+        console.log('trade_history');
 
         var count = ++count1;
         if (count >= coin1List.length)
