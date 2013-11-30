@@ -9,16 +9,19 @@ var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 
 
-var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
 
-//'jry'
-
-var coin2List = ['cny'];
-
-var count1 = 0;
 
 if (__production)
 {
+    var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
+
+//'jry'
+
+    var coin2List = ['cny'];
+
+    var count1 = 0;
+
+
     AV.Cloud.setInterval('refreash_market', 9, function(){
 
 //        var myDate = new Date();
@@ -60,14 +63,14 @@ if (__production)
 
         console.log('trade_history');
 
-        var count = ++count1;
-        if (count >= coin1List.length)
-        {
-            count1 = 0;
-            count = count1;
-        }
-
-        tradeHistory(coin1List[count],'cny');
+//        var count = ++count1;
+//        if (count >= coin1List.length)
+//        {
+//            count1 = 0;
+//            count = count1;
+//        }
+//
+//        tradeHistory(coin1List[count],'cny');
 
     });
 }
