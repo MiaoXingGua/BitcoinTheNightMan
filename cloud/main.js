@@ -63,7 +63,7 @@ if (__production)
         var count = ++count1;
         if (count >= coin1List.length)
         {
-            count1-=coin1List.length;
+            count1 = 0;
             count = count1;
         }
 
