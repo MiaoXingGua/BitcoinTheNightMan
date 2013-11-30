@@ -8,7 +8,12 @@ AV.Cloud.define("hello", function(request, response) {
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 
-var i = 0;
+
+var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','jry','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
+
+var coin2List = ['cny'];
+
+var count1 = 0;
 
 if (__production)
 {
@@ -45,14 +50,22 @@ if (__production)
 //        refreashMarket('exc','cny');
 //        refreashMarket('dtc','cny');
 //        refreashMarket('bsc','cny');
-
+//        refreashMarket('cent','cny');
 
     });
 
     AV.Cloud.setInterval('trade_history', 9, function(){
 
-        console.log('trade_history');
+//        console.log('trade_history');
 //        tradeHistory('btc','cny');
+        var count = ++count1;
+        if (count >= coin1List.length)
+        {
+            count1-=coin1List.length;
+            count = count1;
+        }
+
+        tradeHistory(coin1List[count],'cny');
 
     });
 }
@@ -136,7 +149,7 @@ var refreashMarket = function(coin1,coin2){
                     error: function(market, error) {
                         // Execute any logic that should take place if the save fails.
                         // error is a AV.Error with an error code and description.
-                        console.error('Failed to create new object, with error code: ' + error.description);
+                        console.error('Failed to create new object, with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
                     }
                 });
             }
@@ -150,38 +163,46 @@ var refreashMarket = function(coin1,coin2){
 
 var tradeHistory = function(coin1,coin2){
 
-//    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
-//    var query = new AV.Query(TradeHistory);
-//    query.descending('tid');
-//    query.first({
-//        success: function(object) {
-//           var lastTid = object.get('tid');
-//            console.log('tid');
+    var TradeHistory = AV.Object.extend('TradeHistory_'+coin1+'_'+coin2);
+    var query = new AV.Query(TradeHistory);
+    query.descending('tid');
+    query.first({
+        success: function(object) {
+           var lastTid = object.get('tid');
+//           console.log('tid');
 //           console.log(lastTid);
-//           tradeHistoryRequest(coin1,coin2,lastTid);
-//        },
-//        error: function(error) {
-//
-//            if (error.code == 101)//表中还没用数据
-//            {
-//                tradeHistoryRequest(coin1,coin2,null);
-//            }
-//            else
-//            {
-//                console.error("Error: " + error.code + " " + error.message);
-//            }
-//        }
-//    });
+           tradeHistoryRequest(coin1,coin2,lastTid);
+        },
+        error: function(error) {
+
+            if (error.code == 101)//表中还没用数据
+            {
+                tradeHistoryRequest(coin1,coin2,null);
+            }
+            else
+            {
+                console.error("Error: " + error.code + " " + error.message);
+            }
+        }
+    });
 
 
 }
 
+
+
 AV.Cloud.define("test", function(request, response) {
-    tradeHistoryRequest('btc','cny',null);
+
+    var count = ++count1;
+    if (count >= coin1List.length)
+    {
+        count1-=coin1List.length;
+        count = count1;
+    }
+
+    tradeHistory(coin1List[count],'cny');
+
 });
-
-
-
 
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
@@ -194,86 +215,83 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-//                    console.log(++i);
-
-//                console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
-//            console.dir(resultInfo);
-//            console.log(resultInfo.data);
 
-//            console.dir(resultInfo);
             if (resultInfo.result)
             {
-                console.dir(resultInfo.data[0]);
-                for (var i=0;i<resultInfo.data.length;i++)
+                var dataList = resultInfo.data;
+
+//                dataList.sort(function(data1,data2){return data1.tid>data2.tid?1:-1});
+//                console.dir(dataList);
+
+                for (var i=0;i<dataList.length;i++)
                 {
-                    console.dir(resultInfo.data[i]);
-//                    var data = resultInfo.data[i];
-//
-//                    var tradeHistory = new TradeHistory();
-//                    tradeHistory.set('date',data.date);
-//                    tradeHistory.set('price',data.price);
-//                    tradeHistory.set('amount',data.amount);
-//                    tradeHistory.set('tid',data.tid);
-//                    tradeHistory.set('sell',data.sell);
-//                    tradeHistory.set('type',data.type);
-//                    tradeHistory.set('coin1',coin1);
-//                    tradeHistory.set('coin2',coin2);
-//                    tradeHistory.save(null, {
-//                        success: function(tradeHistory) {
-//                            // Execute any logic that should take place after the object is saved.
+                    var data = dataList[i];
+
+                    var tradeHistory = new TradeHistory();
+                    tradeHistory.set('date',data.date);
+                    tradeHistory.set('price',data.price);
+                    tradeHistory.set('amount',data.amount);
+                    tradeHistory.set('tid',data.tid);
+                    tradeHistory.set('sell',data.sell);
+                    tradeHistory.set('type',data.type);
+                    tradeHistory.set('coin1',coin1);
+                    tradeHistory.set('coin2',coin2);
+                    tradeHistory.save(null, {
+                        success: function(tradeHistory) {
+                            // Execute any logic that should take place after the object is saved.
 //                            console.log('New object created with objectId: ' + tradeHistory.id);
-//                        },
-//                        error: function(tradeHistory, error) {
-//                            // Execute any logic that should take place if the save fails.
-//                            // error is a AV.Error with an error code and description.
-//                            console.error('Failed to create new object, with error code: ' + error.description);
-//                        }
-//                    });
-//
-//
-//                    var lastPrice = data.price;
-//
-//                    var maxQuery = new AV.Query(UserFavicon);
-//                    maxQuery.equalTo('coin.coin1', coin1);
-//                    maxQuery.equalTo('coin.coin2', coin2);
-//                    maxQuery.doesNotExist('maxValue');
-//                    maxQuery.notEqualTo('maxValue', 0);
-//                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-//
-//                    var minQuery = new AV.Query(UserFavicon);
-//                    minQuery.equalTo('coin.coin1', coin1);
-//                    minQuery.equalTo('coin.coin2', coin2);
-//                    minQuery.doesNotExist('minValue');
-//                    minQuery.notEqualTo('minValue', 0);
-//                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
-//
-//                    var mainQuery = AV.Query.or(maxQuery, minQuery);
-//                    mainQuery.find({
-//                        success: function(results) {
-//
-////                    var userList = new Array();
-//                            for (var userFav in results)
-//                            {
-//                                var user = results.get('user');
-//                                var installationQuery = new AV.Query(Installation);
-//                                installationQuery.equalTo('user', user);
-//
-//                                AV.Push.send({
-//                                    channels: [ "Public" ],
-//                                    where: installationQuery,
-//                                    data: {
-//                                        alert: "Public message"
-//                                    }
-//                                });
-//                            }
-//
-//                            // results contains a list of players that either have won a lot of games or won only a few games.
-//                        },
-//                        error: function(error) {
-//                            // There was an error.
-//                        }
-//                    });
+                        },
+                        error: function(tradeHistory, error) {
+
+                            console.error('Failed to create new object, with error code: ' +  serror.code + " error message:" + error.message + " error description:"+ error.description);
+                        }
+                    });
+
+
+                    var lastPrice = data.price;
+
+                    var maxQuery = new AV.Query(UserFavicon);
+                    maxQuery.equalTo('coin.coin1', coin1);
+                    maxQuery.equalTo('coin.coin2', coin2);
+                    maxQuery.doesNotExist('maxValue');
+                    maxQuery.notEqualTo('maxValue', 0);
+                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
+
+                    var minQuery = new AV.Query(UserFavicon);
+                    minQuery.equalTo('coin.coin1', coin1);
+                    minQuery.equalTo('coin.coin2', coin2);
+                    minQuery.doesNotExist('minValue');
+                    minQuery.notEqualTo('minValue', 0);
+                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
+
+                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+                    mainQuery.find({
+                        success: function(results) {
+
+//                    var userList = new Array();
+                            for (var userFav in results)
+                            {
+                                var user = results.get('user');
+                                var installationQuery = new AV.Query(Installation);
+                                installationQuery.equalTo('user', user);
+
+                                AV.Push.send({
+                                    channels: [ "Public" ],
+                                    where: installationQuery,
+                                    data: {
+                                        alert: "Public message"
+                                    }
+                                });
+                            }
+
+                            // results contains a list of players that either have won a lot of games or won only a few games.
+                        },
+                        error: function(error) {
+                            // There was an error.
+
+                        }
+                    });
                 }
 
             }
