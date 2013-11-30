@@ -54,10 +54,10 @@ if (__production)
 
     });
 
-    AV.Cloud.setInterval('trade_history', 9, function(){
+    AV.Cloud.setInterval('trade_history', 1, function(){
 
 //        console.log('trade_history');
-//        tradeHistory('btc','cny');
+
         var count = ++count1;
         if (count >= coin1List.length)
         {
@@ -223,78 +223,80 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //                dataList.sort(function(data1,data2){return data1.tid>data2.tid?1:-1});
 //                console.dir(dataList);
+                console.log(dataList.length);
 
-                for (var i=0;i<dataList.length;i++)
-                {
-                    var data = dataList[i];
-
-                    var tradeHistory = new TradeHistory();
-                    tradeHistory.set('date',data.date);
-                    tradeHistory.set('price',data.price);
-                    tradeHistory.set('amount',data.amount);
-                    tradeHistory.set('tid',data.tid);
-                    tradeHistory.set('sell',data.sell);
-                    tradeHistory.set('type',data.type);
-                    tradeHistory.set('coin1',coin1);
-                    tradeHistory.set('coin2',coin2);
-                    tradeHistory.save(null, {
-                        success: function(tradeHistory) {
-                            // Execute any logic that should take place after the object is saved.
+//                var dataCount = dataList.length;
+//                for (var i=0;i<dataList.length;i++)
+//                {
+//                    var data = dataList[i];
+//
+//                    var tradeHistory = new TradeHistory();
+//                    tradeHistory.set('date',data.date);
+//                    tradeHistory.set('price',data.price);
+//                    tradeHistory.set('amount',data.amount);
+//                    tradeHistory.set('tid',data.tid);
+//                    tradeHistory.set('type',data.type);
+//                    tradeHistory.set('coin1',coin1);
+//                    tradeHistory.set('coin2',coin2);
+//                    tradeHistory.save(null, {
+//                        success: function(tradeHistory) {
+//                                          --dataCount;
 //                            console.log('New object created with objectId: ' + tradeHistory.id);
-                        },
-                        error: function(tradeHistory, error) {
+//                            console.log('剩余：'+dataCount +'个没有成功');
+//                        },
+//                        error: function(tradeHistory, error) {
+//
+//                            console.error('Tid:'+data.tid+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+//                        }
+//                    });
 
-                            console.error('Failed to create new object, with error code: ' +  serror.code + " error message:" + error.message + " error description:"+ error.description);
-                        }
-                    });
 
-
-                    var lastPrice = data.price;
-
-                    var maxQuery = new AV.Query(UserFavicon);
-                    maxQuery.equalTo('coin.coin1', coin1);
-                    maxQuery.equalTo('coin.coin2', coin2);
-                    maxQuery.doesNotExist('maxValue');
-                    maxQuery.notEqualTo('maxValue', 0);
-                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-
-                    var minQuery = new AV.Query(UserFavicon);
-                    minQuery.equalTo('coin.coin1', coin1);
-                    minQuery.equalTo('coin.coin2', coin2);
-                    minQuery.doesNotExist('minValue');
-                    minQuery.notEqualTo('minValue', 0);
-                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
-
-                    var mainQuery = AV.Query.or(maxQuery, minQuery);
-                    mainQuery.find({
-                        success: function(results) {
-
-//                    var userList = new Array();
-                            for (var userFav in results)
-                            {
-                                var user = results.get('user');
-                                var installationQuery = new AV.Query(Installation);
-                                installationQuery.equalTo('user', user);
-
-                                AV.Push.send({
-                                    channels: [ "Public" ],
-                                    where: installationQuery,
-                                    data: {
-                                        alert: "Public message"
-                                    }
-                                });
-                            }
-
-                            // results contains a list of players that either have won a lot of games or won only a few games.
-                        },
-                        error: function(error) {
-                            // There was an error.
-
-                        }
-                    });
+//                    var lastPrice = data.price;
+//
+//                    var maxQuery = new AV.Query(UserFavicon);
+//                    maxQuery.equalTo('coin.coin1', coin1);
+//                    maxQuery.equalTo('coin.coin2', coin2);
+//                    maxQuery.doesNotExist('maxValue');
+//                    maxQuery.notEqualTo('maxValue', 0);
+//                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
+//
+//                    var minQuery = new AV.Query(UserFavicon);
+//                    minQuery.equalTo('coin.coin1', coin1);
+//                    minQuery.equalTo('coin.coin2', coin2);
+//                    minQuery.doesNotExist('minValue');
+//                    minQuery.notEqualTo('minValue', 0);
+//                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
+//
+//                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+//                    mainQuery.find({
+//                        success: function(results) {
+//
+////                    var userList = new Array();
+//                            for (var userFav in results)
+//                            {
+//                                var user = results.get('user');
+//                                var installationQuery = new AV.Query(Installation);
+//                                installationQuery.equalTo('user', user);
+//
+//                                AV.Push.send({
+//                                    channels: [ "Public" ],
+//                                    where: installationQuery,
+//                                    data: {
+//                                        alert: "Public message"
+//                                    }
+//                                });
+//                            }
+//
+//                            // results contains a list of players that either have won a lot of games or won only a few games.
+//                        },
+//                        error: function(error) {
+//                            // There was an error.
+//
+//                        }
+//                    });
                 }
 
-            }
+
         },
         error: function(httpResponse) {
             console.log('失败');
