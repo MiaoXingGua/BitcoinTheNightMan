@@ -10,7 +10,7 @@ var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 
-if (!__production)
+if (__production)
 {
     var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
 
