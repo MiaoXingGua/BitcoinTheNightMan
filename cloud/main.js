@@ -180,11 +180,11 @@ var refreashMarket = function(coin1,coin2){
 //                    }
 //                });
 //            }
-//        },
-//        error: function(httpResponse) {
-//            console.log('失败');
-////            console.error(httpResponse.text);
-//        }
+        },
+        error: function(httpResponse) {
+            console.log('失败');
+//            console.error(httpResponse.text);
+        }
     });
 }
 
