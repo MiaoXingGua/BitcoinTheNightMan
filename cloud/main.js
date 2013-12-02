@@ -5,6 +5,7 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 //var Market = AV.Object.extend("Market");
+var User = AV.Object.extend('_User');
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
@@ -20,80 +21,80 @@ if (!__production)
     var count1 = 0;
 
 
-    AV.Cloud.setInterval('refreash_market', 9, function(){
-
-//        var myDate = new Date();
-//        var mytime=myDate.toLocaleTimeString();
-//        console.log(myDate.toLocaleString());
-
-//        refreashMarket('btc','cny');
-//        refreashMarket('btb','cny');
-//        refreashMarket('ltc','cny');
-//        refreashMarket('ftc','cny');
-//        refreashMarket('frc','cny');
-//        refreashMarket('ppc','cny');
-//        refreashMarket('trc','cny');
-//        refreashMarket('wdc','cny');
-//        refreashMarket('yac','cny');
-//        refreashMarket('cnc','cny');
-//        refreashMarket('bqc','cny');
-//        refreashMarket('ifc','cny');
-//        refreashMarket('zcc','cny');
-//        refreashMarket('cmc','cny');
-//        refreashMarket('jry','cny');
-//        refreashMarket('xpm','cny');
-//        refreashMarket('pts','cny');
-//        refreashMarket('tag','cny');
-//        refreashMarket('tix','cny');
-//        refreashMarket('src','cny');
-//        refreashMarket('mec','cny');
-//        refreashMarket('nmc','cny');
-//        refreashMarket('qrk','cny');
-//        refreashMarket('btb','cny');
-//        refreashMarket('exc','cny');
-//        refreashMarket('dtc','cny');
-//        refreashMarket('bsc','cny');
-//        refreashMarket('cent','cny');
-
-    });
-
-
-    var lastTid = 0;
-
-    AV.Cloud.setInterval('trade_history', 1, function(){
-
-//        console.log('trade_history');
-
-        var count = ++count1;
-
-        if (count >= coin1List.length)
-        {
-            count1 = 0;
-            count = count1;
-        }
-
-//        console.log(count);
-
-
-        tradeHistory(coin1List[count],'cny',count);
-
-    });
-
-    AV.Cloud.setInterval('remind', 1, function(){
-
-        var count = ++count1;
-
-        if (count >= coin1List.length)
-        {
-            count1 = 0;
-            count = count1;
-        }
-
-
-
-        tradeHistory(coin1List[count],'cny',count);
-
-    });
+//    AV.Cloud.setInterval('refreash_market', 9, function(){
+//
+////        var myDate = new Date();
+////        var mytime=myDate.toLocaleTimeString();
+////        console.log(myDate.toLocaleString());
+//
+////        refreashMarket('btc','cny');
+////        refreashMarket('btb','cny');
+////        refreashMarket('ltc','cny');
+////        refreashMarket('ftc','cny');
+////        refreashMarket('frc','cny');
+////        refreashMarket('ppc','cny');
+////        refreashMarket('trc','cny');
+////        refreashMarket('wdc','cny');
+////        refreashMarket('yac','cny');
+////        refreashMarket('cnc','cny');
+////        refreashMarket('bqc','cny');
+////        refreashMarket('ifc','cny');
+////        refreashMarket('zcc','cny');
+////        refreashMarket('cmc','cny');
+////        refreashMarket('jry','cny');
+////        refreashMarket('xpm','cny');
+////        refreashMarket('pts','cny');
+////        refreashMarket('tag','cny');
+////        refreashMarket('tix','cny');
+////        refreashMarket('src','cny');
+////        refreashMarket('mec','cny');
+////        refreashMarket('nmc','cny');
+////        refreashMarket('qrk','cny');
+////        refreashMarket('btb','cny');
+////        refreashMarket('exc','cny');
+////        refreashMarket('dtc','cny');
+////        refreashMarket('bsc','cny');
+////        refreashMarket('cent','cny');
+//
+//    });
+//
+//
+//    var lastTid = 0;
+//
+//    AV.Cloud.setInterval('trade_history', 1, function(){
+//
+////        console.log('trade_history');
+//
+//        var count = ++count1;
+//
+//        if (count >= coin1List.length)
+//        {
+//            count1 = 0;
+//            count = count1;
+//        }
+//
+////        console.log(count);
+//
+//
+//        tradeHistory(coin1List[count],'cny',count);
+//
+//    });
+//
+//    AV.Cloud.setInterval('remind', 1, function(){
+//
+//        var count = ++count1;
+//
+//        if (count >= coin1List.length)
+//        {
+//            count1 = 0;
+//            count = count1;
+//        }
+//
+//
+//
+//        tradeHistory(coin1List[count],'cny',count);
+//
+//    });
 
 
 var refreashMarket = function(coin1,coin2){
@@ -224,69 +225,62 @@ var tradeHistory = function(coin1,coin2,count){
     }
 }
 
+AV.Cloud.define("push", function(request, response) {
 
-
-AV.Cloud.define("test", function(request, response) {
-
-
-    var count = ++count1;
-
-    if (count >= coin1List.length)
-    {
-        count1 = 0;
-        count = count1;
-    }
-
-//    var lastPrice = data.price;
-
-    var coin1 = coin1List[count];
-    var coin2 = 'cny';
-    var lastTradeQuery = new AV.Query(TradeHistory);
-    lastTradeQuery.descending('tid');
-
-    var maxQuery = new AV.Query(UserFavicon);
-    maxQuery.equalTo('coin.coin1', coin1);
-    maxQuery.equalTo('coin.coin2', coin2);
-    maxQuery.doesNotExist('maxValue');
-    maxQuery.notEqualTo('maxValue', 0);
-    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-
-    var minQuery = new AV.Query(UserFavicon);
-    minQuery.equalTo('coin.coin1', coin1);
-    minQuery.equalTo('coin.coin2', coin2);
-    minQuery.doesNotExist('minValue');
-    minQuery.notEqualTo('minValue', 0);
-    minQuery.lessThanOrEqualTo("minValue", lastPrice);
-
-    var mainQuery = AV.Query.or(maxQuery, minQuery);
-    mainQuery.find({
-        success: function(results) {
-
-//                    var userList = new Array();
-            for (var userFav in results)
-            {
-                var user = results.get('user');
-                var installationQuery = new AV.Query(Installation);
-                installationQuery.equalTo('user', user);
-
-                AV.Push.send({
-                    channels: [ "Public" ],
-                    where: installationQuery,
-                    data: {
-                        alert: "Public message"
-                    }
-                });
-            }
-
-            // results contains a list of players that either have won a lot of games or won only a few games.
-        },
-        error: function(error) {
-            // There was an error.
-
+    var installationQuery = new AV.Query(Installation);
+    installationQuery.equalTo('user', request.params.user);
+    AV.Push.send({
+        channels: [ "Public" ],
+        where: installationQuery,
+        data: {
+            alert: "hehehe"
         }
     });
 
 });
+
+AV.Cloud.define("test", function(request, response) {
+
+
+//    var count = ++count1;
+//
+//    if (count >= coin1List.length)
+//    {
+//        count1 = 0;
+//        count = count1;
+//    }
+
+    tradeHistoryRequest('btc','cny',null);//1
+    tradeHistoryRequest('ltc','cny',null);//2
+    tradeHistoryRequest('ftc','cny',null);//3
+    tradeHistoryRequest('frc','cny',null);//4
+    tradeHistoryRequest('ppc','cny',null);//5
+//    tradeHistoryRequest('trc','cny',null);//6
+    tradeHistoryRequest('wdc','cny',null);//7
+    tradeHistoryRequest('yac','cny',null);//8
+    tradeHistoryRequest('cnc','cny',null);//9
+    tradeHistoryRequest('bqc','cny',null);//10
+    tradeHistoryRequest('ifc','cny',null);//11
+    tradeHistoryRequest('zcc','cny',null);//12
+    tradeHistoryRequest('cmc','cny',null);//13
+    tradeHistoryRequest('xpm','cny',null);//14
+    tradeHistoryRequest('pts','cny',null);//15
+    tradeHistoryRequest('tag','cny',null);//16
+    tradeHistoryRequest('tix','cny',null);//17
+    tradeHistoryRequest('src','cny',null);//18
+    tradeHistoryRequest('mec','cny',null);//19
+    tradeHistoryRequest('nmc','cny',null);//20
+    tradeHistoryRequest('qrk','cny',null);//21
+    tradeHistoryRequest('btb','cny',null);//22
+    tradeHistoryRequest('exc','cny',null);//23
+    tradeHistoryRequest('dtc','cny',null);//24
+//    tradeHistoryRequest('bsc','cny',null);//26
+    tradeHistoryRequest('cent','cny',null);//25
+
+});
+
+var tradeCount = 0;
+var dataList = new Array();;
 
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
@@ -307,42 +301,75 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             var resultInfo = JSON.parse(httpResponse.text);
 
+//            tradeCount++;
+//            console.log(resultInfo.data.length);
+
 //            console.log(httpResponse.text);
-
-
-            if (resultInfo.result)
-            {
-                var dataList = resultInfo.data;
-//                console.dir(dataList);
-//                console.dir(dataList.length);
-
+//            if (resultInfo.result)
+//            {
+//                if (tradeCount <= 25)
+//                {
+//                    console.log('add : '+tradeCount);
+//
+//                    for (var data in resultInfo.data)
+//                    {
+//                        dataList.push(data);
+//                    }
+//
+//                }
+//                else
+//                {
+//                    console.log('log');
+//
+//                    console.log(dataList.length);
+//                    AV.Object.saveAll(dataList,{
+//                        success: function(dataList) {
+//
+//                            console.log(dataList.length+' object is created ');
+//                            tradeCount = 0;
+//                            dataList.splice(0);
+//                        },
+//                        error: function(dataList, error) {
+//
+//                            console.error(dataList.length+'is failed to create, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+//                            tradeCount = 0;
+//                            dataList.splice(0);
+//                        }
+//                    });
+//                }
+////                console.dir(dataList);
+////                console.dir(dataList.length);
+//
+//
                 dataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
 
-                for (var i=0;i<dataList.length;i++)
-                {
-                    var data = dataList[i];
-
-                    var tradeHistory = new TradeHistory();
-                    tradeHistory.set('date',data.date);
-                    tradeHistory.set('price',data.price);
-                    tradeHistory.set('amount',data.amount);
-                    tradeHistory.set('tid',data.tid);
-                    tradeHistory.set('type',data.type);
-                    tradeHistory.set('coin1',coin1);
-                    tradeHistory.set('coin2',coin2);
-                    tradeHistory.save(null, {
-                        success: function(tradeHistory) {
-
-                            console.log('New object created with tid: ' + tradeHistory.get('tid'));
-
-                        },
-                        error: function(tradeHistory, error) {
-
-                            console.error('Tid:'+tradeHistory.get('tid')+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
-                        }
-                    });
-
-                }
+////                for (var i=0;i<dataList.length;i++)
+////                {
+////                    var data = dataList[i];
+////
+////                    var tradeHistory = new TradeHistory();
+////                    tradeHistory.set('date',data.date);
+////                    tradeHistory.set('price',data.price);
+////                    tradeHistory.set('amount',data.amount);
+////                    tradeHistory.set('tid',data.tid);
+////                    tradeHistory.set('type',data.type);
+////                    tradeHistory.set('coin1',coin1);
+////                    tradeHistory.set('coin2',coin2);
+////                    tradeHistory.save(null, {
+////                        success: function(tradeHistory) {
+////
+////                            console.log('New object created with tid: ' + tradeHistory.get('tid'));
+////
+////                        },
+////                        error: function(tradeHistory, error) {
+////
+////                            console.error('Tid:'+tradeHistory.get('tid')+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+////                        }
+////                    });
+////
+////                }
+//
+//
                     var lastPrice = dataList[0].price;
 
                     var maxQuery = new AV.Query(UserFavicon);
@@ -374,7 +401,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                                     channels: [ "Public" ],
                                     where: installationQuery,
                                     data: {
-                                        alert: "Public message"
+                                        alert: "hehehe"
                                     }
                                 });
                             }
@@ -386,18 +413,18 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
                         }
                     });
+//
 
-            }
 
         },
         error: function(httpResponse) {
             console.log('失败');
 //            console.error(httpResponse.text);
         }
+
     });
 
 }
-
 
 //生成guid
 function newGuid()
@@ -420,7 +447,6 @@ AV.Cloud.define('register', function(request, response) {
 //    register(request,response,10,null,'phone');
     register(request,response,10,null);
 });
-
 
 var register = function(request,response,count,error)
 {
