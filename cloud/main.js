@@ -108,7 +108,7 @@ var refreashMarket = function(coin1,coin2){
 
             console.log(++i);
 
-                console.dir(JSON.parse(httpResponse.text));
+            console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
 //
 //            var lastPrice = resultInfo.last;
@@ -154,37 +154,37 @@ var refreashMarket = function(coin1,coin2){
 //                }
 //            });
 
-            if (resultInfo.result)
-            {
-                var Market = AV.Object.extend(coin1+'_'+coin2);
-                var market = new Market();
-                market.set('last',resultInfo.last);
-                market.set('high',resultInfo.high);
-                market.set('low',resultInfo.low);
-                market.set('avg',resultInfo.avg);
-                market.set('sell',resultInfo.sell);
-                market.set('buy',resultInfo.buy);
-                market.set('vol1',resultInfo.vol1);
-                market.set('vol2',resultInfo.vol2);
-                market.set('coin1',coin1);
-                market.set('coin2',coin2);
-                market.save(null, {
-                    success: function(market) {
-                        // Execute any logic that should take place after the object is saved.
-                        console.log('New object created with objectId: ' + market.id);
-                    },
-                    error: function(market, error) {
-                        // Execute any logic that should take place if the save fails.
-                        // error is a AV.Error with an error code and description.
-                        console.error('Failed to create new object, with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
-                    }
-                });
-            }
-        },
-        error: function(httpResponse) {
-            console.log('失败');
-//            console.error(httpResponse.text);
-        }
+//            if (resultInfo.result)
+//            {
+//                var Market = AV.Object.extend(coin1+'_'+coin2);
+//                var market = new Market();
+//                market.set('last',resultInfo.last);
+//                market.set('high',resultInfo.high);
+//                market.set('low',resultInfo.low);
+//                market.set('avg',resultInfo.avg);
+//                market.set('sell',resultInfo.sell);
+//                market.set('buy',resultInfo.buy);
+//                market.set('vol1',resultInfo.vol1);
+//                market.set('vol2',resultInfo.vol2);
+//                market.set('coin1',coin1);
+//                market.set('coin2',coin2);
+//                market.save(null, {
+//                    success: function(market) {
+//                        // Execute any logic that should take place after the object is saved.
+//                        console.log('New object created with objectId: ' + market.id);
+//                    },
+//                    error: function(market, error) {
+//                        // Execute any logic that should take place if the save fails.
+//                        // error is a AV.Error with an error code and description.
+//                        console.error('Failed to create new object, with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+//                    }
+//                });
+//            }
+//        },
+//        error: function(httpResponse) {
+//            console.log('失败');
+////            console.error(httpResponse.text);
+//        }
     });
 }
 
