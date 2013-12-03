@@ -89,10 +89,10 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         success: function(httpResponse) {
 
             var resultInfo = JSON.parse(httpResponse.text);
+            console.log(httpResponse.url + '成功');
 
-            console.log('成功');
             console.log('剩余 ：' + --tradeRequestCount);
-//            console.log(typeof(dataList));
+
             //保存数据
             if (resultInfo.result)
             {
