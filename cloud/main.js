@@ -122,7 +122,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     });
                 }
             //推送
-            if (resultInfo.result)
+            if (resultInfo.result && 0)
             {
                 var resultDataList = resultInfo.data;
                 resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
