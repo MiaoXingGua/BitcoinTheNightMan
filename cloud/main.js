@@ -1,25 +1,187 @@
 // Use AV.Cloud.define to define as many cloud functions as you want.
 // For example:
-AV.Cloud.define("hello", function(request, response) {
-  response.success("Hello world!");
-});
+
 
 //var Market = AV.Object.extend("Market");
 var User = AV.Object.extend('_User');
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
+var Coin = AV.Object.extend('Coin');
 
-if (__production)
+if (!__production)
 {
-    var coin1List = ['btc','btb','ltc','ftc','frc','ppc','trc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','bsc','cent'];
 
-//'jry'
+AV.Cloud.define("hello", function(request, response) {
+    response.success("Hello world!");
+});
 
-    var coin2List = ['cny'];
+var coin1List = ['btc','btb','ltc','ftc','frc','ppc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','cent'];
 
-    var count1 = 0;
+//jry bsc trc
 
+var coin2List = ['cny'];
+
+//    var count1 = 0;
+var tradeRequestCount = 0;
+
+//var tradeCount = 0;
+var dataList = new Array();
+
+
+AV.Cloud.define("xxxxxxxx", function(request, response) {
+    if (tradeRequestCount == 0)
+    {
+        dataList.splice(0);
+
+        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+        {
+            console.log('创建请求 : '+tradeRequestCount);
+            tradeHistory(coin1List[tradeRequestCount],'cny');
+        }
+    }
+    else
+    {
+        console.log('有请求没有返回---return');
+    }
+});
+
+var tradeHistory = function(coin1,coin2){
+
+    var query = new AV.Query(TradeHistory);
+    query.equalTo('coin1',coin1);
+    query.equalTo('coin2',coin2);
+    query.descending('tid');
+    query.first({
+        success: function(object) {
+            var lastTid = object.get('tid');
+            tradeHistoryRequest(coin1,coin2,lastTid);
+        },
+        error: function(error) {
+//                console.log(2);
+            if (error.code == 101)//表中还没用数据
+            {
+                tradeHistoryRequest(coin1,coin2,null);
+            }
+            else
+            {
+                console.error("Error: " + error.code + " " + error.message);
+            }
+        }
+    });
+}
+
+var tradeHistoryRequest = function(coin1,coin2,lastTid){
+
+    if (lastTid && lastTid != 0)
+    {
+        var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid;
+    }
+    else
+    {
+        var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+    }
+    console.log(url);
+
+    AV.Cloud.httpRequest({
+        url: url,
+//            secureProtocol : 'SSLv1_method',
+        success: function(httpResponse) {
+
+            var resultInfo = JSON.parse(httpResponse.text);
+
+            console.log('成功');
+            console.log('剩余 ：' + --tradeRequestCount);
+//            console.log(typeof(dataList));
+            //保存数据
+            if (resultInfo.result)
+            {
+                if (tradeRequestCount != 0)
+                {
+                    for (var data in resultInfo.data)
+                    {
+                        dataList.push(data);
+                    }
+                    console.log('save数组 ： '+dataList.length);
+                }
+                else
+                {
+                    AV.Object.saveAll(dataList,{
+                        success: function(dataList) {
+
+                            console.log(dataList.length+' object is created ');
+
+                            dataList.splice(0);
+                        },
+                        error: function(dataList, error) {
+
+                            console.error(dataList.length+'is failed to create, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+
+                            dataList.splice(0);
+                        }
+                    });
+                }
+            //推送
+            if (resultInfo.result)
+            {
+                var resultDataList = resultInfo.data;
+                resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
+
+                var lastPrice = resultDataList[0].price;
+                console.log('lastPrice : ' + lastPrice);
+
+                var coinQuery = new AV.Query(Coin);
+                coinQuery.equalTo('coin1', coin1);
+                coinQuery.equalTo('coin2', coin2);
+
+                //bqc cny
+                var maxQuery = new AV.Query(UserFavicon);
+                maxQuery.matchesQuery('coin', coinQuery);
+                maxQuery.equalTo('isPush', true);
+                maxQuery.exists('maxValue');
+                maxQuery.notEqualTo('maxValue', 0);
+                maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
+
+                maxQuery.find({
+                    success: function(results) {
+
+                        console.log('2 : '+results.length);
+//                              var userList = new Array();
+                        for (var userFav in results)
+                        {
+                            var user = results.get('user');
+                            var userId = AV.Object.createWithoutData("_User", user.id);
+                            var installationQuery = new AV.Query(Installation);
+                            installationQuery.equalTo('user', userId);
+
+                            AV.Push.send({
+//                                    channels: [ "Public" ],
+                                where: installationQuery,
+                                data: {
+                                    alert: "哈哈哈"
+                                }
+                            });
+                        }
+                        // results contains a list of players that either have won a lot of games or won only a few games.
+                    },
+                    error: function(error) {
+                        // There was an error.
+                    }
+                });
+
+
+            }
+
+            }
+        },
+        error: function(httpResponse) {
+            console.log('失败');
+            console.log('剩余 ：' + --tradeRequestCount);
+//            console.error(httpResponse.text);
+        }
+
+    });
+}
 
 //    AV.Cloud.setInterval('refreash_market', 9, function(){
 //
@@ -61,41 +223,18 @@ if (__production)
 //
 //    var lastTid = 0;
 //
-//    AV.Cloud.setInterval('trade_history', 1, function(){
-//
-////        console.log('trade_history');
-//
-//        var count = ++count1;
-//
-//        if (count >= coin1List.length)
-//        {
-//            count1 = 0;
-//            count = count1;
-//        }
-//
-////        console.log(count);
-//
-//
-//        tradeHistory(coin1List[count],'cny',count);
-//
-//    });
-//
-//    AV.Cloud.setInterval('remind', 1, function(){
-//
-//        var count = ++count1;
-//
-//        if (count >= coin1List.length)
-//        {
-//            count1 = 0;
-//            count = count1;
-//        }
-//
-//
-//
-//        tradeHistory(coin1List[count],'cny',count);
-//
-//    });
 
+//AV.Cloud.setInterval('trade_history', 10, function(){
+//    if (tradeRequestCount == 0)
+//    {
+//        dataList.splice(0);
+//
+//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+//        {
+//            tradeHistory(coin1List[tradeRequestCount],'cny');
+//        }
+//    }
+//});
 
 var refreashMarket = function(coin1,coin2){
 
@@ -110,7 +249,7 @@ var refreashMarket = function(coin1,coin2){
 
             console.dir(JSON.parse(httpResponse.text));
             var resultInfo = JSON.parse(httpResponse.text);
-//
+
 //            var lastPrice = resultInfo.last;
 //
 //            var maxQuery = new AV.Query(UserFavicon);
@@ -190,48 +329,15 @@ var refreashMarket = function(coin1,coin2){
 
 
 
-var tradeHistory = function(coin1,coin2,count){
 
-    if (count == 1)
-    {
-        var query = new AV.Query(TradeHistory);
-        query.descending('tid');
-        query.first({
-            success: function(object) {
-                lastTid = object.get('tid');
-
-//           console.log('tid');
-
-                tradeHistoryRequest(coin1,coin2,lastTid);
-//                console.log(1);
-            },
-            error: function(error) {
-//                console.log(2);
-                if (error.code == 101)//表中还没用数据
-                {
-                    tradeHistoryRequest(coin1,coin2,null);
-                }
-                else
-                {
-                    console.error("Error: " + error.code + " " + error.message);
-                }
-            }
-        });
-    }
-    else
-    {
-//        console.log(3);
-        tradeHistoryRequest(coin1,coin2,lastTid);
-    }
-}
 
 AV.Cloud.define("push", function(request, response) {
 
     var installationQuery = new AV.Query(Installation);
-    installationQuery.equalTo('user', request.params.user);
+//    installationQuery.equalTo('user', request.params.user);
     AV.Push.send({
-        channels: [ "Public" ],
-        where: installationQuery,
+//        channels: [ "Public" ],
+//        where: installationQuery,
         data: {
             alert: "hehehe"
         }
@@ -239,8 +345,9 @@ AV.Cloud.define("push", function(request, response) {
 
 });
 
-AV.Cloud.define("test", function(request, response) {
 
+
+AV.Cloud.define("test", function(request, response) {
 
 //    var count = ++count1;
 //
@@ -279,152 +386,15 @@ AV.Cloud.define("test", function(request, response) {
 
 });
 
-var tradeCount = 0;
-var dataList = new Array();;
-
-var tradeHistoryRequest = function(coin1,coin2,lastTid){
-
-   if (lastTid && lastTid != 0)
-   {
-       var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2+'/'+lastTid;
-   }
-   else
-   {
-       var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
-   }
-    console.log(url);
-
-    AV.Cloud.httpRequest({
-        url: url,
-//            secureProtocol : 'SSLv1_method',
-        success: function(httpResponse) {
-
-            var resultInfo = JSON.parse(httpResponse.text);
-
-//            tradeCount++;
-//            console.log(resultInfo.data.length);
-
-//            console.log(httpResponse.text);
-//            if (resultInfo.result)
-//            {
-//                if (tradeCount <= 25)
-//                {
-//                    console.log('add : '+tradeCount);
-//
-//                    for (var data in resultInfo.data)
-//                    {
-//                        dataList.push(data);
-//                    }
-//
-//                }
-//                else
-//                {
-//                    console.log('log');
-//
-//                    console.log(dataList.length);
-//                    AV.Object.saveAll(dataList,{
-//                        success: function(dataList) {
-//
-//                            console.log(dataList.length+' object is created ');
-//                            tradeCount = 0;
-//                            dataList.splice(0);
-//                        },
-//                        error: function(dataList, error) {
-//
-//                            console.error(dataList.length+'is failed to create, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
-//                            tradeCount = 0;
-//                            dataList.splice(0);
-//                        }
-//                    });
-//                }
-////                console.dir(dataList);
-////                console.dir(dataList.length);
-//
-//
-                dataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
-
-////                for (var i=0;i<dataList.length;i++)
-////                {
-////                    var data = dataList[i];
-////
-////                    var tradeHistory = new TradeHistory();
-////                    tradeHistory.set('date',data.date);
-////                    tradeHistory.set('price',data.price);
-////                    tradeHistory.set('amount',data.amount);
-////                    tradeHistory.set('tid',data.tid);
-////                    tradeHistory.set('type',data.type);
-////                    tradeHistory.set('coin1',coin1);
-////                    tradeHistory.set('coin2',coin2);
-////                    tradeHistory.save(null, {
-////                        success: function(tradeHistory) {
-////
-////                            console.log('New object created with tid: ' + tradeHistory.get('tid'));
-////
-////                        },
-////                        error: function(tradeHistory, error) {
-////
-////                            console.error('Tid:'+tradeHistory.get('tid')+'is failed to create new object, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
-////                        }
-////                    });
-////
-////                }
-//
-//
-                    var lastPrice = dataList[0].price;
-
-                    var maxQuery = new AV.Query(UserFavicon);
-                    maxQuery.equalTo('coin.coin1', coin1);
-                    maxQuery.equalTo('coin.coin2', coin2);
-                    maxQuery.doesNotExist('maxValue');
-                    maxQuery.notEqualTo('maxValue', 0);
-                    maxQuery.greaterThanOrEqualTo('maxValue', lastPrice);
-
-                    var minQuery = new AV.Query(UserFavicon);
-                    minQuery.equalTo('coin.coin1', coin1);
-                    minQuery.equalTo('coin.coin2', coin2);
-                    minQuery.doesNotExist('minValue');
-                    minQuery.notEqualTo('minValue', 0);
-                    minQuery.lessThanOrEqualTo("minValue", lastPrice);
-
-                    var mainQuery = AV.Query.or(maxQuery, minQuery);
-                    mainQuery.find({
-                        success: function(results) {
-
-//                    var userList = new Array();
-                            for (var userFav in results)
-                            {
-                                var user = results.get('user');
-                                var installationQuery = new AV.Query(Installation);
-                                installationQuery.equalTo('user', user);
-
-                                AV.Push.send({
-                                    channels: [ "Public" ],
-                                    where: installationQuery,
-                                    data: {
-                                        alert: "hehehe"
-                                    }
-                                });
-                            }
-
-                            // results contains a list of players that either have won a lot of games or won only a few games.
-                        },
-                        error: function(error) {
-                            // There was an error.
-
-                        }
-                    });
-//
 
 
-        },
-        error: function(httpResponse) {
-            console.log('失败');
-//            console.error(httpResponse.text);
-        }
+AV.Cloud.define("get_coin", function(request, response) {
 
-    });
+});
 
-}
+
+
+
 
 //生成guid
 function newGuid()
