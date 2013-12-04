@@ -39,14 +39,14 @@ AV.Cloud.setInterval('trade_request', 10, function(){
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
-            if (!__production)
+//            if (!__production)
                 console.log('创建请求 : '+tradeRequestCount);
             tradeHistory(coin1List[tradeRequestCount],'cny');
         }
     }
     else
     {
-        if (!__production)
+//        if (!__production)
             console.log('还有有请求没有返回---return');
     }
 });
