@@ -234,7 +234,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 var saveAllObject = function(){
 
-    if (!__production)
+//    if (!__production)
         console.log('save数组 ： '+dataList.length);
     AV.Object.saveAll(dataList,function(list,error){
 
