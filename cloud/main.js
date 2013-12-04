@@ -51,7 +51,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
     else
     {
 //        if (!__production)
-//            console.log('还有有请求没有返回---return');
+            console.log('还有有请求没有返回---return');
     }
 
     if (marketRequestCount == 0 && marketIsSaveDone)
@@ -69,7 +69,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
     else
     {
 //        if (!__production)
-//            console.log('还有有请求没有返回---return');
+            console.log('还有有请求没有返回---return');
     }
 });
 
