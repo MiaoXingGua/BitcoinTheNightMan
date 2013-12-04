@@ -9,7 +9,7 @@ var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 var Coin = AV.Object.extend('Coin');
 
-if (!__production)
+if (__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -30,22 +30,23 @@ var tradeRequestCount = 0;
 var dataList = new Array();
 var isSaveDone = 1;
 
-//AV.Cloud.setInterval('trade_request', 3, function(){
-//    if (tradeRequestCount == 0)
-//    {
-//        dataList.splice(0);
-//
-//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-//        {
-////            console.log('创建请求 : '+tradeRequestCount);
-//            tradeHistory(coin1List[tradeRequestCount],'cny');
-//        }
-//    }
-//    else
-//    {
-//        console.log('有请求没有返回---return');
-//    }
-//});
+AV.Cloud.setInterval('trade_request', 3, function(){
+    if (tradeRequestCount == 0 && isSaveDone)
+    {
+        dataList.splice(0);
+        isSaveDone = 0;
+
+        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+        {
+//            console.log('创建请求 : '+tradeRequestCount);
+            tradeHistory(coin1List[tradeRequestCount],'cny');
+        }
+    }
+    else
+    {
+        console.log('有请求没有返回---return');
+    }
+});
 
 
 AV.Cloud.define("xxxxxxxx", function(request, response) {
