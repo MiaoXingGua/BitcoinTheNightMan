@@ -270,8 +270,6 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 //    }
 //});
 
-
-
 var refreashMarket = function(coin1,coin2){
 
 //    console.log(coin1+'_'+coin2);
