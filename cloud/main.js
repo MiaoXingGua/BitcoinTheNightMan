@@ -39,7 +39,7 @@ AV.Cloud.setInterval('trade_request', 3, function(){
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
-//            console.log('创建请求 : '+tradeRequestCount);
+            console.log('创建请求 : '+tradeRequestCount);
             tradeHistory(coin1List[tradeRequestCount],'cny');
         }
     }
@@ -59,7 +59,7 @@ AV.Cloud.define("xxxxxxxx", function(request, response) {
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
-//            console.log('创建请求 : '+tradeRequestCount);
+            console.log('创建请求 : '+tradeRequestCount);
             tradeHistory(coin1List[tradeRequestCount],'cny');
         }
     }
@@ -128,9 +128,9 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //            console.dir(httpResponse.headers);
 
-            if (!__production)
+//            if (!__production)
                 console.log('成功' + coin1 + '_' + coin2);
-            if (!__production)
+//            if (!__production)
                 console.log('剩余 ：' + --tradeRequestCount);
 
             //保存数据
