@@ -46,22 +46,22 @@ AV.Cloud.setInterval('trade_request', 3, function(){
 });
 
 
-AV.Cloud.define("xxxxxxxx", function(request, response) {
-    if (tradeRequestCount == 0)
-    {
-        dataList.splice(0);
-
-        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-        {
-            console.log('创建请求 : '+tradeRequestCount);
-            tradeHistory(coin1List[tradeRequestCount],'cny');
-        }
-    }
-    else
-    {
-        console.log('有请求没有返回---return');
-    }
-});
+//AV.Cloud.define("xxxxxxxx", function(request, response) {
+//    if (tradeRequestCount == 0)
+//    {
+//        dataList.splice(0);
+//
+//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+//        {
+//            console.log('创建请求 : '+tradeRequestCount);
+//            tradeHistory(coin1List[tradeRequestCount],'cny');
+//        }
+//    }
+//    else
+//    {
+//        console.log('有请求没有返回---return');
+//    }
+//});
 
 
 
@@ -121,7 +121,15 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                 {
                     for (var data in resultInfo.data)
                     {
-                        dataList.push(data);
+                        var trade = new tradeHistory();
+                        trade.set('date',date.date);
+                        trade.set('price',date.price);
+                        trade.set('amount',date.amount);
+                        trade.set('tid',date.tid);
+                        trade.set('type',date.type);
+                        trade.set('coin1',coin1);
+                        trade.set('coin2',coin2);
+                        dataList.push(trade);
                     }
 //                    console.log('save数组 ： '+dataList.length);
                 }
