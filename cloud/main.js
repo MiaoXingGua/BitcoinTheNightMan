@@ -28,6 +28,23 @@ var tradeRequestCount = 0;
 //var tradeCount = 0;
 var dataList = new Array();
 
+AV.Cloud.setInterval('trade_request', 3, function(){
+    if (tradeRequestCount == 0)
+    {
+        dataList.splice(0);
+
+        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+        {
+            console.log('创建请求 : '+tradeRequestCount);
+            tradeHistory(coin1List[tradeRequestCount],'cny');
+        }
+    }
+    else
+    {
+        console.log('有请求没有返回---return');
+    }
+});
+
 
 AV.Cloud.define("xxxxxxxx", function(request, response) {
     if (tradeRequestCount == 0)
@@ -45,6 +62,8 @@ AV.Cloud.define("xxxxxxxx", function(request, response) {
         console.log('有请求没有返回---return');
     }
 });
+
+
 
 var tradeHistory = function(coin1,coin2){
 
@@ -158,21 +177,21 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
                         console.log('2 : '+results.length);
 //                              var userList = new Array();
-//                        for (var userFav in results)
-//                        {
-//                            var user = results.get('user');
-//                            var userId = AV.Object.createWithoutData("_User", user.id);
-//                            var installationQuery = new AV.Query(Installation);
-//                            installationQuery.equalTo('user', userId);
-//
-//                            AV.Push.send({
-////                                    channels: [ "Public" ],
-//                                where: installationQuery,
-//                                data: {
-//                                    alert: "哈哈哈"
-//                                }
-//                            });
-//                        }
+                        for (var userFav in results)
+                        {
+                            var user = results.get('user');
+                            var userId = AV.Object.createWithoutData("_User", user.id);
+                            var installationQuery = new AV.Query(Installation);
+                            installationQuery.equalTo('user', userId);
+
+                            AV.Push.send({
+//                                    channels: [ "Public" ],
+                                where: installationQuery,
+                                data: {
+                                    alert: "哈哈哈"
+                                }
+                            });
+                        }
                         // results contains a list of players that either have won a lot of games or won only a few games.
                     },
                     error: function(error) {
@@ -182,7 +201,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
             }
         },
         error: function(httpResponse) {
-            console.log('失败');
+            console.log('失败'+ coin1 + '_' + coin2);
             console.log('剩余 ：' + --tradeRequestCount);
 //            console.error(httpResponse.text);
         }
