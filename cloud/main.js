@@ -7,6 +7,7 @@ var User = AV.Object.extend('_User');
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
+var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
 
 if (__production)
@@ -22,51 +23,54 @@ var coin1List = ['btc','btb','ltc','ftc','frc','ppc','wdc','yac','cnc','bqc','if
 
 var coin2List = ['cny'];
 
-//    var count1 = 0;
 var tradeRequestCount = 0;
+var marketRequestCount = 0;
+
+var tradeIsSaveDone = 1;
+var marketIsSaveDone = 1;
 
 //var tradeCount = 0;
-var dataList = new Array();
-var isSaveDone = 1;
+var tradeDataList = new Array();
+var marketDataList = new Array();
 
-AV.Cloud.setInterval('trade_request', 10, function(){
+//trade
+AV.Cloud.setInterval('coin_request', 5, function(){
 
 //    console.log(isSaveDone);
-    if (tradeRequestCount == 0 && isSaveDone)
+    if (tradeRequestCount == 0 && tradeIsSaveDone)
     {
-        dataList.splice(0);
-        isSaveDone = 0;
+        tradeDataList.splice(0);
+        tradeIsSaveDone = 0;
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
-            if (!__production)
-                console.log('创建请求 : '+tradeRequestCount);
+//            if (!__production)
+//                console.log('创建请求 : '+tradeRequestCount);
             tradeHistory(coin1List[tradeRequestCount],'cny');
         }
     }
     else
     {
-        if (!__production)
-            console.log('还有有请求没有返回---return');
+//        if (!__production)
+//            console.log('还有有请求没有返回---return');
     }
-});
 
-AV.Cloud.define("xxxxxxxx", function(request, response) {
-    if (tradeRequestCount == 0 && isSaveDone)
+    if (marketRequestCount == 0 && marketIsSaveDone)
     {
-        dataList.splice(0);
-        isSaveDone = 0;
+        marketDataList.splice(0);
+        marketIsSaveDone = 0;
 
-        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+        for (;marketRequestCount<coin1List.length;marketRequestCount++)
         {
-            console.log('创建请求 : '+tradeRequestCount);
-            tradeHistory(coin1List[tradeRequestCount],'cny');
+//            if (!__production)
+//                console.log('创建请求 : '+marketRequestCount);
+            marketHistory(coin1List[marketRequestCount],'cny');
         }
     }
     else
     {
-        if (!__production)
-            console.log('有请求没有返回---return');
+//        if (!__production)
+//            console.log('还有有请求没有返回---return');
     }
 });
 
@@ -104,7 +108,11 @@ var tradeHistory = function(coin1,coin2){
     });
 }
 
+var marketHistory = function(coin1,coin2){
 
+ marketHistoryRequest(coin1,coin2);
+
+}
 
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
@@ -116,8 +124,9 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     {
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
-    if (!__production)
-         console.log(url);
+
+//    if (!__production)
+//         console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -130,10 +139,10 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             --tradeRequestCount;
 
-            if (!__production)
-                console.log('成功' + coin1 + '_' + coin2);
-            if (!__production)
-                console.log('剩余 ：' + tradeRequestCount);
+//            if (!__production)
+//                console.log('成功' + coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + tradeRequestCount);
 
             //保存数据
             if (resultInfo.result)
@@ -146,19 +155,19 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     var trade = new TradeHistory();
                     trade.set('date',data.date);
                     trade.set('price',price = parseFloat(data.price));
-                    trade.set('amount',data.amount);
+                    trade.set('amount',parseFloat(data.amount));
                     trade.set('tid',data.tid);
                     trade.set('type',data.type);
                     trade.set('coin1',coin1);
                     trade.set('coin2',coin2);
-                    dataList.push(trade);
+                    tradeDataList.push(trade);
                 }
 
             }
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject('tradeHistroy');
+                saveAllObject(tradeDataList,'tradeHistroy');
             }
 
             //推送
@@ -220,96 +229,116 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         error: function(httpResponse) {
 
             --tradeRequestCount;
-            if (!__production)
-                console.log('失败'+ coin1 + '_' + coin2);
-            if (!__production)
-                console.log('剩余 ：' + tradeRequestCount);
+
+//            if (!__production)
+//                console.log('失败'+ coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + tradeRequestCount);
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject('tradeHistroy');
+                saveAllObject(tradeDataList,'tradeHistroy');
             }
-//            console.error(httpResponse.text);
         }
-
     });
 }
 
-var saveAllObject = function(className){
+var marketHistoryRequest = function(coin1,coin2){
+
+    var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
+
+//    if (!__production)
+//        console.log(url);
+
+    AV.Cloud.httpRequest({
+        url: url,
+//            secureProtocol : 'SSLv1_method',
+        success: function(httpResponse) {
+
+            var resultInfo = JSON.parse(httpResponse.text);
+
+            --marketRequestCount;
+
+//            if (!__production)
+//                console.log('成功' + coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + marketRequestCount);
+
+            //保存数据
+            if (resultInfo.result)
+            {
+
+                var market = new MarketHistory();
+                market.set('last',parseFloat(resultInfo.last));
+                market.set('high',parseFloat(resultInfo.high));
+                market.set('low',parseFloat(resultInfo.low));
+                market.set('avg',parseFloat(resultInfo.avg));
+                market.set('sell',parseFloat(resultInfo.sell));
+                market.set('buy',parseFloat(resultInfo.buy));
+                market.set('avg',parseFloat(resultInfo.avg));
+                market.set('vol1',parseFloat(resultInfo['vol_'+coin1]));
+                market.set('vol2',parseFloat(resultInfo['vol_'+coin2]));
+                market.set('coin1',coin1);
+                market.set('coin2',coin2);
+                marketDataList.push(market);
+            }
+
+            if (marketRequestCount == 0)
+            {
+                saveAllObject(marketDataList,'marketHistroy');
+            }
+
+        },
+        error: function(httpResponse) {
+
+            --marketRequestCount;
+
+//            if (!__production)
+//                console.log('失败'+ coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + marketRequestCount);
+
+            if (marketRequestCount == 0)
+            {
+                saveAllObject(marketDataList,'marketHistroy');
+            }
+        }
+    });
+}
+
+var saveAllObject = function(list,className){
 
     if (!__production)
-        console.log('save数组 ： '+dataList.length);
-    AV.Object.saveAll(dataList,function(list,error){
+        console.log(className + ' : ' + 'save数组 ： ' + list.length);
 
-        if (list)
+    AV.Object.saveAll(list,function(completeList,error){
+
+//        console.log(typeof(list));
+        if (completeList)
         {
-            console.log(className + ' : ' + dataList.length+' object is created ');
+            console.log(className + ' : ' + list.length+' object is created ');
         }
         else
         {
-            console.error(className + ' : ' + dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error(className + ' : ' + list.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
-        dataList.splice(0);
-        isSaveDone = 1;
+        list.splice(0);
+
+        if (className == 'marketHistroy')
+        {
+            marketIsSaveDone = 1;
+        }
+        else if (className == 'tradeHistroy')
+        {
+            tradeIsSaveDone = 1;
+        }
 
     });
-
 }
 
-//    AV.Cloud.setInterval('refreash_market', 9, function(){
-//
-////        var myDate = new Date();
-////        var mytime=myDate.toLocaleTimeString();
-////        console.log(myDate.toLocaleString());
-//
-////        refreashMarket('btc','cny');
-////        refreashMarket('btb','cny');
-////        refreashMarket('ltc','cny');
-////        refreashMarket('ftc','cny');
-////        refreashMarket('frc','cny');
-////        refreashMarket('ppc','cny');
-////        refreashMarket('trc','cny');
-////        refreashMarket('wdc','cny');
-////        refreashMarket('yac','cny');
-////        refreashMarket('cnc','cny');
-////        refreashMarket('bqc','cny');
-////        refreashMarket('ifc','cny');
-////        refreashMarket('zcc','cny');
-////        refreashMarket('cmc','cny');
-////        refreashMarket('jry','cny');
-////        refreashMarket('xpm','cny');
-////        refreashMarket('pts','cny');
-////        refreashMarket('tag','cny');
-////        refreashMarket('tix','cny');
-////        refreashMarket('src','cny');
-////        refreashMarket('mec','cny');
-////        refreashMarket('nmc','cny');
-////        refreashMarket('qrk','cny');
-////        refreashMarket('btb','cny');
-////        refreashMarket('exc','cny');
-////        refreashMarket('dtc','cny');
-////        refreashMarket('bsc','cny');
-////        refreashMarket('cent','cny');
-//
-//    });
-//
-//
-//    var lastTid = 0;
-//
 
-//AV.Cloud.setInterval('trade_history', 10, function(){
-//    if (tradeRequestCount == 0)
-//    {
-//        dataList.splice(0);
-//
-//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-//        {
-//            tradeHistory(coin1List[tradeRequestCount],'cny');
-//        }
-//    }
-//});
-
+//market
 var refreashMarket = function(coin1,coin2){
 
 //    console.log(coin1+'_'+coin2);
