@@ -89,8 +89,10 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         success: function(httpResponse) {
 
             var resultInfo = JSON.parse(httpResponse.text);
-            console.log(httpResponse.url + '成功');
 
+            console.log('成功' + coin1 + '_' + coin2);
+
+//            console.dir(httpResponse.headers);
             console.log('剩余 ：' + --tradeRequestCount);
 
             //保存数据
@@ -121,6 +123,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                         }
                     });
                 }
+            }
+
             //推送
             if (resultInfo.result && 0)
             {
@@ -134,7 +138,6 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                 coinQuery.equalTo('coin1', coin1);
                 coinQuery.equalTo('coin2', coin2);
 
-                //bqc cny
                 var maxQuery = new AV.Query(UserFavicon);
                 maxQuery.matchesQuery('coin', coinQuery);
                 maxQuery.equalTo('isPush', true);
@@ -142,36 +145,40 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                 maxQuery.notEqualTo('maxValue', 0);
                 maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
 
-                maxQuery.find({
+                var minQuery = new AV.Query(UserFavicon);
+                minQuery.matchesQuery('coin', coinQuery);
+                minQuery.equalTo('isPush', true);
+                minQuery.exists('minValue');
+                minQuery.notEqualTo('minValue', 0);
+                minQuery.greaterThanOrEqualTo("minValue", lastPrice);
+
+                var mainQuery = AV.Query.or(maxQuery, minQuery);
+                mainQuery.find({
                     success: function(results) {
 
                         console.log('2 : '+results.length);
 //                              var userList = new Array();
-                        for (var userFav in results)
-                        {
-                            var user = results.get('user');
-                            var userId = AV.Object.createWithoutData("_User", user.id);
-                            var installationQuery = new AV.Query(Installation);
-                            installationQuery.equalTo('user', userId);
-
-                            AV.Push.send({
-//                                    channels: [ "Public" ],
-                                where: installationQuery,
-                                data: {
-                                    alert: "哈哈哈"
-                                }
-                            });
-                        }
+//                        for (var userFav in results)
+//                        {
+//                            var user = results.get('user');
+//                            var userId = AV.Object.createWithoutData("_User", user.id);
+//                            var installationQuery = new AV.Query(Installation);
+//                            installationQuery.equalTo('user', userId);
+//
+//                            AV.Push.send({
+////                                    channels: [ "Public" ],
+//                                where: installationQuery,
+//                                data: {
+//                                    alert: "哈哈哈"
+//                                }
+//                            });
+//                        }
                         // results contains a list of players that either have won a lot of games or won only a few games.
                     },
                     error: function(error) {
                         // There was an error.
                     }
                 });
-
-
-            }
-
             }
         },
         error: function(httpResponse) {
@@ -235,6 +242,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 //        }
 //    }
 //});
+
+
 
 var refreashMarket = function(coin1,coin2){
 
