@@ -9,7 +9,7 @@ var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 var Coin = AV.Object.extend('Coin');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -29,7 +29,7 @@ var tradeRequestCount = 0;
 var dataList = new Array();
 var isSaveDone = 1;
 
-AV.Cloud.setInterval('trade_request', 3, function(){
+AV.Cloud.setInterval('trade_request', 10, function(){
 
 //    console.log(isSaveDone);
     if (tradeRequestCount == 0 && isSaveDone)
@@ -50,7 +50,6 @@ AV.Cloud.setInterval('trade_request', 3, function(){
     }
 });
 
-
 AV.Cloud.define("xxxxxxxx", function(request, response) {
     if (tradeRequestCount == 0 && isSaveDone)
     {
@@ -69,8 +68,6 @@ AV.Cloud.define("xxxxxxxx", function(request, response) {
             console.log('有请求没有返回---return');
     }
 });
-
-
 
 var tradeHistory = function(coin1,coin2){
 
@@ -106,6 +103,8 @@ var tradeHistory = function(coin1,coin2){
     });
 }
 
+
+
 var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
     if (lastTid && lastTid != 0)
@@ -139,9 +138,11 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                 for (var i=0;i<resultInfo.data.length;i++)
                 {
                     var data = resultInfo.data[i];
+//                    console.dir(data.price +' ---  '+parseFloat(data.price));
+
                     var trade = new TradeHistory();
                     trade.set('date',data.date);
-                    trade.set('price',data.price);
+                    trade.set('price',price = parseFloat(data.price));
                     trade.set('amount',data.amount);
                     trade.set('tid',data.tid);
                     trade.set('type',data.type);
@@ -234,21 +235,20 @@ var saveAllObject = function(){
 
 //    if (!__production)
         console.log('save数组 ： '+dataList.length);
-    AV.Object.saveAll(dataList,{
-        success: function(dataList) {
+    AV.Object.saveAll(dataList,function(list,error){
 
+        if (list)
+        {
             console.log(dataList.length+' object is created ');
-
-            dataList.splice(0);
-            isSaveDone = 1;
-        },
-        error: function(dataList, error) {
-
-            console.error(dataList.length+'is failed to create, with  error message:' + error.message + " error description:"+ error.description);
-
-            dataList.splice(0);
-            isSaveDone = 1;
         }
+        else
+        {
+            console.error(dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+        }
+
+            dataList.splice(0);
+            isSaveDone = 1;
+
     });
 
 }
