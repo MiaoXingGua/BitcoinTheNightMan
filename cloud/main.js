@@ -333,6 +333,10 @@ var saveAllObject = function(list,className){
         {
             tradeIsSaveDone = 1;
         }
+        else
+        {
+            console.log('xxxxx');
+        }
 
     });
 }
