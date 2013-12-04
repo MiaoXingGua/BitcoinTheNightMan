@@ -128,10 +128,12 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //            console.dir(httpResponse.headers);
 
+            --tradeRequestCount;
+
             if (!__production)
                 console.log('成功' + coin1 + '_' + coin2);
             if (!__production)
-                console.log('剩余 ：' + --tradeRequestCount);
+                console.log('剩余 ：' + tradeRequestCount);
 
             //保存数据
             if (resultInfo.result)
@@ -217,10 +219,11 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         },
         error: function(httpResponse) {
 
+            --tradeRequestCount;
             if (!__production)
                 console.log('失败'+ coin1 + '_' + coin2);
             if (!__production)
-                console.log('剩余 ：' + --tradeRequestCount);
+                console.log('剩余 ：' + tradeRequestCount);
 
             if (tradeRequestCount == 0)
             {
