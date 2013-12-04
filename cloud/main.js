@@ -158,7 +158,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject();
+                saveAllObject('tradeHistroy');
             }
 
             //推送
@@ -227,7 +227,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject();
+                saveAllObject('tradeHistroy');
             }
 //            console.error(httpResponse.text);
         }
@@ -235,19 +235,19 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     });
 }
 
-var saveAllObject = function(){
+var saveAllObject = function(className){
 
-//    if (!__production)
+    if (!__production)
         console.log('save数组 ： '+dataList.length);
     AV.Object.saveAll(dataList,function(list,error){
 
         if (list)
         {
-            console.log(dataList.length+' object is created ');
+            console.log(className + ' : ' + dataList.length+' object is created ');
         }
         else
         {
-            console.error(dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error(className + ' : ' + dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
         dataList.splice(0);
