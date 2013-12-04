@@ -242,7 +242,7 @@ var saveAllObject = function(){
         },
         error: function(dataList, error) {
 
-            console.error(dataList.length+'is failed to create, with error code: ' +  error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error(dataList.length+'is failed to create, with  error message:' + error.message + " error description:"+ error.description);
             isSaveDone = 1;
             dataList.splice(0);
         }
