@@ -35,7 +35,7 @@ var marketDataList = new Array();
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
-    console.log(isSaveDone);
+    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
 
     if (tradeRequestCount == 0 && tradeIsSaveDone)
     {
