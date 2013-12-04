@@ -16,8 +16,7 @@ AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
 });
 
-var coin1List = ['btc','btb','ltc']
-    //,'ftc','frc','ppc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','cent'];
+var coin1List = ['btc','btb','ltc','ftc','frc','ppc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','cent'];
 
 //jry bsc trc
 
