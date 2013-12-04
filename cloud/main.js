@@ -9,7 +9,7 @@ var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 var Coin = AV.Object.extend('Coin');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -31,6 +31,8 @@ var dataList = new Array();
 var isSaveDone = 1;
 
 AV.Cloud.setInterval('trade_request', 3, function(){
+
+    console.log(isSaveDone);
     if (tradeRequestCount == 0 && isSaveDone)
     {
         dataList.splice(0);
@@ -44,7 +46,7 @@ AV.Cloud.setInterval('trade_request', 3, function(){
     }
     else
     {
-        console.log('有请求没有返回---return');
+        if (!__production) console.log('还有有请求没有返回---return');
     }
 });
 
@@ -113,7 +115,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     {
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
-//    console.log(url);
+    if (!__production) console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -124,8 +126,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //            console.dir(httpResponse.headers);
 
-//            console.log('成功' + coin1 + '_' + coin2);
-//            console.log('剩余 ：' + --tradeRequestCount);
+            if (!__production) console.log('成功' + coin1 + '_' + coin2);
+            if (!__production) console.log('剩余 ：' + --tradeRequestCount);
 
             //保存数据
             if (resultInfo.result)
@@ -148,7 +150,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject();
+                if (dataList.length) saveAllObject();
             }
 
             //推送
@@ -208,12 +210,13 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
             }
         },
         error: function(httpResponse) {
-//            console.log('失败'+ coin1 + '_' + coin2);
-//            console.log('剩余 ：' + --tradeRequestCount);
+
+            if (!__production) console.log('失败'+ coin1 + '_' + coin2);
+            if (!__production) console.log('剩余 ：' + --tradeRequestCount);
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject();
+                if (dataList.length) saveAllObject();
             }
 //            console.error(httpResponse.text);
         }
@@ -223,7 +226,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 var saveAllObject = function(){
 
-//    console.log('save数组 ： '+dataList.length);
+    if (!__production) console.log('save数组 ： '+dataList.length);
     AV.Object.saveAll(dataList,{
         success: function(dataList) {
 
