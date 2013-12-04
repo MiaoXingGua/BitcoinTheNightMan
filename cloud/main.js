@@ -32,7 +32,7 @@ var isSaveDone = 1;
 
 AV.Cloud.setInterval('trade_request', 3, function(){
 
-    console.log(isSaveDone);
+//    console.log(isSaveDone);
     if (tradeRequestCount == 0 && isSaveDone)
     {
         dataList.splice(0);
@@ -150,7 +150,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                if (dataList.length) saveAllObject();
+                saveAllObject();
             }
 
             //推送
@@ -216,7 +216,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                if (dataList.length) saveAllObject();
+                saveAllObject();
             }
 //            console.error(httpResponse.text);
         }
