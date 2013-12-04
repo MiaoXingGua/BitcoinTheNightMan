@@ -113,7 +113,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     {
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
-    console.log(url);
+//    console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -124,8 +124,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 //            console.dir(httpResponse.headers);
 
-            console.log('成功' + coin1 + '_' + coin2);
-            console.log('剩余 ：' + --tradeRequestCount);
+//            console.log('成功' + coin1 + '_' + coin2);
+//            console.log('剩余 ：' + --tradeRequestCount);
 
             //保存数据
             if (resultInfo.result)
@@ -208,8 +208,8 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
             }
         },
         error: function(httpResponse) {
-            console.log('失败'+ coin1 + '_' + coin2);
-            console.log('剩余 ：' + --tradeRequestCount);
+//            console.log('失败'+ coin1 + '_' + coin2);
+//            console.log('剩余 ：' + --tradeRequestCount);
 
             if (tradeRequestCount == 0)
             {
@@ -223,7 +223,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 var saveAllObject = function(){
 
-    console.log('save数组 ： '+dataList.length);
+//    console.log('save数组 ： '+dataList.length);
     AV.Object.saveAll(dataList,{
         success: function(dataList) {
 
