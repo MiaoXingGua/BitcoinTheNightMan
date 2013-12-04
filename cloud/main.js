@@ -46,7 +46,8 @@ AV.Cloud.setInterval('trade_request', 3, function(){
     }
     else
     {
-        if (!__production) console.log('还有有请求没有返回---return');
+//        if (!__production)
+            console.log('还有有请求没有返回---return');
     }
 });
 
