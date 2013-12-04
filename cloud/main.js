@@ -202,7 +202,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         },
         error: function(httpResponse) {
             console.log('失败'+ coin1 + '_' + coin2);
-            console.log('剩余 ：' + --tradeRequestCount);
+//            console.log('剩余 ：' + --tradeRequestCount);
 //            console.error(httpResponse.text);
         }
 
