@@ -35,7 +35,7 @@ AV.Cloud.setInterval('trade_request', 3, function(){
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
-            console.log('创建请求 : '+tradeRequestCount);
+//            console.log('创建请求 : '+tradeRequestCount);
             tradeHistory(coin1List[tradeRequestCount],'cny');
         }
     }
@@ -100,7 +100,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     {
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
-    console.log(url);
+//    console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -109,10 +109,10 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             var resultInfo = JSON.parse(httpResponse.text);
 
-            console.log('成功' + coin1 + '_' + coin2);
+//            console.log('成功' + coin1 + '_' + coin2);
 
 //            console.dir(httpResponse.headers);
-            console.log('剩余 ：' + --tradeRequestCount);
+//            console.log('剩余 ：' + --tradeRequestCount);
 
             //保存数据
             if (resultInfo.result)
@@ -123,7 +123,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     {
                         dataList.push(data);
                     }
-                    console.log('save数组 ： '+dataList.length);
+//                    console.log('save数组 ： '+dataList.length);
                 }
                 else
                 {
