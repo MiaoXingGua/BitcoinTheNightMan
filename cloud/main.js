@@ -116,7 +116,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
     {
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
-    if (!__production)
+//    if (!__production)
          console.log(url);
 
     AV.Cloud.httpRequest({
@@ -232,20 +232,22 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
 var saveAllObject = function(){
 
-    if (!__production)
+//    if (!__production)
         console.log('save数组 ： '+dataList.length);
     AV.Object.saveAll(dataList,{
         success: function(dataList) {
 
             console.log(dataList.length+' object is created ');
-            isSaveDone = 1;
+
             dataList.splice(0);
+            isSaveDone = 1;
         },
         error: function(dataList, error) {
 
             console.error(dataList.length+'is failed to create, with  error message:' + error.message + " error description:"+ error.description);
-            isSaveDone = 1;
+
             dataList.splice(0);
+            isSaveDone = 1;
         }
     });
 
