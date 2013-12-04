@@ -122,11 +122,11 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     for (var data in resultInfo.data)
                     {
                         var trade = new tradeHistory();
-                        trade.set('date',date.date);
-                        trade.set('price',date.price);
-                        trade.set('amount',date.amount);
-                        trade.set('tid',date.tid);
-                        trade.set('type',date.type);
+                        trade.set('date',data.date);
+                        trade.set('price',data.price);
+                        trade.set('amount',data.amount);
+                        trade.set('tid',data.tid);
+                        trade.set('type',data.type);
                         trade.set('coin1',coin1);
                         trade.set('coin2',coin2);
                         dataList.push(trade);
