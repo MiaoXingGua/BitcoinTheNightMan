@@ -56,24 +56,24 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 //            console.log('还有有请求没有返回---return');
     }
 
-    if (marketRequestCount == 0 && marketIsSaveDone)
-    {
-        marketDataList.splice(0);
-        marketIsSaveDone = 0;
-        console.log('marketHistroy Start : '+marketIsSaveDone);
-
-        for (;marketRequestCount<coin1List.length;marketRequestCount++)
-        {
-//            if (!__production)
-//                console.log('创建请求 : '+marketRequestCount);
-            marketHistory(coin1List[marketRequestCount],'cny');
-        }
-    }
-    else
-    {
-//        if (!__production)
-//            console.log('还有有请求没有返回---return');
-    }
+//    if (marketRequestCount == 0 && marketIsSaveDone)
+//    {
+//        marketDataList.splice(0);
+//        marketIsSaveDone = 0;
+//        console.log('marketHistroy Start : '+marketIsSaveDone);
+//
+//        for (;marketRequestCount<coin1List.length;marketRequestCount++)
+//        {
+////            if (!__production)
+////                console.log('创建请求 : '+marketRequestCount);
+//            marketHistory(coin1List[marketRequestCount],'cny');
+//        }
+//    }
+//    else
+//    {
+////        if (!__production)
+////            console.log('还有有请求没有返回---return');
+//    }
 });
 
 var tradeHistory = function(coin1,coin2){
