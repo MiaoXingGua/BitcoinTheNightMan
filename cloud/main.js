@@ -322,7 +322,7 @@ var saveAllTrade = function(){
 
         tradeDataList.splice(0);
         tradeIsSaveDone = 1;
-        console.log('tradeHistroy Done');
+        console.log('tradeHistroy Done : '+tradeIsSaveDone);
 
     });
 }
@@ -345,7 +345,7 @@ var saveAllMarket = function(){
 
         marketDataList.splice(0);
         marketIsSaveDone = 1;
-        console.log('marketHistroy Done');
+        console.log('marketHistroy Done : '+marketIsSaveDone);
 
     });
 }
