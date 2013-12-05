@@ -11,12 +11,14 @@ var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (!__production)
+if (__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
 });
+
+
 
 var coin1List = ['btc','btb','ltc','ftc','frc','ppc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','cent'];
 
@@ -82,35 +84,43 @@ var setIsRunning = function(type,run){
     });
 }
 
-AV.Cloud.setInterval('clean_runCount', 10*60, function(){
+AV.Cloud.define("reset_running", function(request, response) {
+    setIsRunning('trade',false);
+    setIsRunning('market',false);
+    console.log("reset_running");
+});
 
-    console.log('clean_runCount');
-
-    var query = new AV.Query(RequestController);
-    query.find({
-        success: function(objects) {
-
-            if (object)
-            {
-                for (var obj in objects)
-                {
-                    obj.set('runCount',0);
-                    obj.save();
-                }
-                console.error("clean_runCount 成功");
-            }
-            else
-            {
-                console.error("clean_runCount 失败");
-            }
-        },
-        error: function(error) {
-            console.error("clean_runCount 失败");
-            console.error("Error: " + error.code + " " + error.message);
-        }
-    });
-
-} );
+//AV.Cloud.setInterval('clean_runCount', 10*60, function(){
+//
+//    console.log('clean_runCount');
+//
+//    var query = new AV.Query(RequestController);
+//    query.find({
+//        success: function(objects) {
+//
+//            if (objects)
+//            {
+//                for (var i=0;i<objects.length;i++)
+//                {
+//                    var obj = objects[i];
+//                    obj.set('runCount',0);
+//                    obj.save();
+//                }
+//
+//                console.log("clean_runCount 成功");
+//            }
+//            else
+//            {
+//                console.log("clean_runCount 失败");
+//            }
+//        },
+//        error: function(error) {
+//            console.log("clean_runCount 失败");
+//            console.error("Error: " + error.code + " " + error.message);
+//        }
+//    });
+//
+//} );
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
@@ -221,44 +231,47 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
 
-//    if (!__production)
-//         console.log(url);
+    if (!__production)
+         console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-            var resultInfo = JSON.parse(httpResponse.text);
+            if (typeof(httpResponse.text) !== 'string')
+            {
+                var resultInfo = JSON.parse(httpResponse.text);
 
 //            console.dir(httpResponse.headers);
 
-            --tradeRequestCount;
+                --tradeRequestCount;
 
 //            if (!__production)
 //                console.log('成功' + coin1 + '_' + coin2);
 //            if (!__production)
 //                console.log('剩余 ：' + tradeRequestCount);
 
-            //保存数据
-            if (resultInfo.result)
-            {
-                for (var i=0;i<resultInfo.data.length;i++)
+                //保存数据
+                if (resultInfo.result)
                 {
-                    var data = resultInfo.data[i];
+                    for (var i=0;i<resultInfo.data.length;i++)
+                    {
+                        var data = resultInfo.data[i];
 //                    console.dir(data.price +' ---  '+parseFloat(data.price));
 
-                    var trade = new TradeHistory();
-                    trade.set('date',data.date);
-                    trade.set('price',price = parseFloat(data.price));
-                    trade.set('amount',parseFloat(data.amount));
-                    trade.set('tid',data.tid);
-                    trade.set('type',data.type);
-                    trade.set('coin1',coin1);
-                    trade.set('coin2',coin2);
-                    tradeDataList.push(trade);
-                }
+                        var trade = new TradeHistory();
+                        trade.set('date',data.date);
+                        trade.set('price',price = parseFloat(data.price));
+                        trade.set('amount',parseFloat(data.amount));
+                        trade.set('tid',data.tid);
+                        trade.set('type',data.type);
+                        trade.set('coin1',coin1);
+                        trade.set('coin2',coin2);
+                        tradeDataList.push(trade);
+                    }
 
+                }
             }
 
             if (tradeRequestCount == 0)
@@ -343,37 +356,43 @@ var marketHistoryRequest = function(coin1,coin2){
 
     var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
 
+    if (!__production)
+        console.log(url);
+
     AV.Cloud.httpRequest({
         url: url,
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-            var resultInfo = JSON.parse(httpResponse.text);
-
-            --marketRequestCount;
-
-//            if (!__production)
-//                console.log('成功' + coin1 + '_' + coin2);
-//            if (!__production)
-//                console.log('剩余 ：' + marketRequestCount);
-
-            //保存数据
-            if (resultInfo.result)
+            if (typeof(httpResponse.text) !== 'string')
             {
+                var resultInfo = JSON.parse(httpResponse.text);
 
-                var market = new MarketHistory();
-                market.set('last',parseFloat(resultInfo.last));
-                market.set('high',parseFloat(resultInfo.high));
-                market.set('low',parseFloat(resultInfo.low));
-                market.set('avg',parseFloat(resultInfo.avg));
-                market.set('sell',parseFloat(resultInfo.sell));
-                market.set('buy',parseFloat(resultInfo.buy));
-                market.set('avg',parseFloat(resultInfo.avg));
-                market.set('vol1',parseFloat(resultInfo['vol_'+coin1]));
-                market.set('vol2',parseFloat(resultInfo['vol_'+coin2]));
-                market.set('coin1',coin1);
-                market.set('coin2',coin2);
-                marketDataList.push(market);
+                --marketRequestCount;
+
+            if (!__production)
+                console.log('成功' + coin1 + '_' + coin2);
+            if (!__production)
+                console.log('剩余 ：' + marketRequestCount);
+
+                //保存数据
+                if (resultInfo.result)
+                {
+
+                    var market = new MarketHistory();
+                    market.set('last',parseFloat(resultInfo.last));
+                    market.set('high',parseFloat(resultInfo.high));
+                    market.set('low',parseFloat(resultInfo.low));
+                    market.set('avg',parseFloat(resultInfo.avg));
+                    market.set('sell',parseFloat(resultInfo.sell));
+                    market.set('buy',parseFloat(resultInfo.buy));
+                    market.set('avg',parseFloat(resultInfo.avg));
+                    market.set('vol1',parseFloat(resultInfo['vol_'+coin1]));
+                    market.set('vol2',parseFloat(resultInfo['vol_'+coin2]));
+                    market.set('coin1',coin1);
+                    market.set('coin2',coin2);
+                    marketDataList.push(market);
+                }
             }
 
             if (marketRequestCount == 0)
@@ -386,10 +405,10 @@ var marketHistoryRequest = function(coin1,coin2){
 
             --marketRequestCount;
 
-//            if (!__production)
-//                console.log('失败'+ coin1 + '_' + coin2);
-//            if (!__production)
-//                console.log('剩余 ：' + marketRequestCount);
+            if (!__production)
+                console.log('失败'+ coin1 + '_' + coin2);
+            if (!__production)
+                console.log('剩余 ：' + marketRequestCount);
 
             if (marketRequestCount == 0)
             {
