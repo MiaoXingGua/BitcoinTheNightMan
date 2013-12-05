@@ -10,7 +10,7 @@ var TradeHistory = AV.Object.extend('TradeHistory');
 var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
 
-if (!__production)
+if (__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
