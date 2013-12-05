@@ -41,6 +41,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
     {
         tradeDataList.splice(0);
         tradeIsSaveDone = 0;
+        console.log('tradeHistroy Start : '+tradeIsSaveDone);
 
         for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
         {
@@ -59,6 +60,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
     {
         marketDataList.splice(0);
         marketIsSaveDone = 0;
+        console.log('marketHistroy Start : '+marketIsSaveDone);
 
         for (;marketRequestCount<coin1List.length;marketRequestCount++)
         {
