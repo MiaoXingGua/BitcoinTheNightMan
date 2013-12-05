@@ -9,6 +9,7 @@ var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
+var RequestController = AV.Object.extend('RequestController');
 
 if (__production)
 {
@@ -33,6 +34,52 @@ var tradeCount = 0;
 var marketCount = 0;
 var tradeDataList = new Array();
 var marketDataList = new Array();
+
+var getIsRunning = function(type,block){
+
+    var query = new AV.Query(RequestController);
+    query.equalTo('type',type);
+    query.first({
+        success: function(object) {
+
+            if (object)
+            {
+                var isRunning = object.get('isRunning');
+                block(isRunning);
+            }
+            else
+            {
+                console.error("Error: isRunning 对象不存在");
+            }
+        },
+        error: function(error) {
+             console.error("Error: " + error.code + " " + error.message);
+        }
+    });
+}
+
+var setIsRunning = function(type,run){
+
+    var query = new AV.Query(RequestController);
+    query.equalTo('type',type);
+    query.first({
+        success: function(object) {
+
+            if (object)
+            {
+                object.set('isRunning',run);
+                object.save();
+            }
+            else
+            {
+                console.error("Error: isRunning 对象不存在");
+            }
+        },
+        error: function(error) {
+            console.error("Error: " + error.code + " " + error.message);
+        }
+    });
+}
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
@@ -60,27 +107,36 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 ////            console.log('还有有请求没有返回---return');
 //    }
 
-    if (marketRequestCount == 0 && marketIsSaveDone)
-    {
-        marketDataList.splice(0);
-        marketIsSaveDone = 0;
-        console.log('marketHistroy Start : '+marketIsSaveDone);
+    getIsRunning('market',function(isRunning){
 
-        marketCount++;
-        console.log('marketCount : ' + marketCount);
-
-        for (;marketRequestCount<coin1List.length;marketRequestCount++)
+        if (marketRequestCount == 0 && !isRunning)
         {
+            marketDataList.splice(0);
+//            marketIsSaveDone = 0;
+
+            setIsRunning('market',true);
+
+            console.log('marketHistroy Start');
+
+            marketCount++;
+            console.log('marketCount : ' + marketCount);
+
+            for (;marketRequestCount<coin1List.length;marketRequestCount++)
+            {
 //            if (!__production)
 //                console.log('创建请求 : '+marketRequestCount);
-            marketHistory(coin1List[marketRequestCount],'cny');
+                marketHistory(coin1List[marketRequestCount],'cny');
+            }
         }
-    }
-    else
-    {
+        else
+        {
 //        if (!__production)
 //            console.log('还有有请求没有返回---return');
-    }
+        }
+
+    });
+
+
 });
 
 var tradeHistory = function(coin1,coin2){
@@ -322,16 +378,19 @@ var saveAllTrade = function(){
 
         if (completeList)
         {
-            console.log('tradeHistroy' + ' : ' + completeList.length+' object is created ');
+            console.log('tradeHistroy' + ' : ' + tradeDataList.length+' object is created ');
         }
         else
         {
-            console.error('tradeHistroy' + ' : ' + completeList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error('tradeHistroy' + ' : ' + tradeDataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
         tradeDataList.splice(0);
-        tradeIsSaveDone = 1;
-        console.log('tradeHistroy Done : '+tradeIsSaveDone);
+//        tradeIsSaveDone = 1;
+
+        setIsRunning('trade',false);
+
+        console.log('tradeHistroy Done ');
 
     });
 }
@@ -345,16 +404,17 @@ var saveAllMarket = function(){
 
         if (completeList)
         {
-            console.log('marketHistroy' + ' : ' + completeList.length+' object is created ');
+            console.log('marketHistroy' + ' : ' + marketDataList.length+' object is created ');
         }
         else
         {
-            console.error('marketHistroy' + ' : ' + completeList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error('marketHistroy' + ' : ' + marketDataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
         marketDataList.splice(0);
-        marketIsSaveDone = 1;
-        console.log('marketHistroy Done : '+marketIsSaveDone);
+//        marketIsSaveDone = 1;
+        setIsRunning('market',false);
+        console.log('marketHistroy Done ');
 
     });
 }
