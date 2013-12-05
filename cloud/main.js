@@ -29,14 +29,15 @@ var marketRequestCount = 0;
 var tradeIsSaveDone = 1;
 var marketIsSaveDone = 1;
 
-//var tradeCount = 0;
+var tradeCount = 0;
 var tradeDataList = new Array();
 var marketDataList = new Array();
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
-    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
-
+//    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
+    tradeCount++;
+    console.log('tradeCount : ' + tradeCount);
     if (tradeRequestCount == 0 && tradeIsSaveDone)
     {
         tradeDataList.splice(0);
