@@ -82,6 +82,36 @@ var setIsRunning = function(type,run){
     });
 }
 
+AV.Cloud.setInterval('clean_runCount', 10*60, function(){
+
+    console.log('clean_runCount');
+
+    var query = new AV.Query(RequestController);
+    query.find({
+        success: function(objects) {
+
+            if (object)
+            {
+                for (var obj in objects)
+                {
+                    obj.set('runCount',0);
+                    obj.save();
+                }
+                console.error("clean_runCount 成功");
+            }
+            else
+            {
+                console.error("clean_runCount 失败");
+            }
+        },
+        error: function(error) {
+            console.error("clean_runCount 失败");
+            console.error("Error: " + error.code + " " + error.message);
+        }
+    });
+
+} );
+
 AV.Cloud.setInterval('coin_request', 5, function(){
 
 //    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
