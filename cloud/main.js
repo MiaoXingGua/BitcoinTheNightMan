@@ -10,7 +10,7 @@ var TradeHistory = AV.Object.extend('TradeHistory');
 var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -30,44 +30,28 @@ var tradeIsSaveDone = 1;
 var marketIsSaveDone = 1;
 
 var tradeCount = 0;
+var marketCount = 0;
 var tradeDataList = new Array();
 var marketDataList = new Array();
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
 //    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
-    tradeCount++;
-    console.log('tradeCount : ' + tradeCount);
-    if (tradeRequestCount == 0 && tradeIsSaveDone)
-    {
-        tradeDataList.splice(0);
-        tradeIsSaveDone = 0;
-        console.log('tradeHistroy Start : '+tradeIsSaveDone);
 
-        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-        {
-//            if (!__production)
-//                console.log('创建请求 : '+tradeRequestCount);
-            tradeHistory(coin1List[tradeRequestCount],'cny');
-        }
-    }
-    else
-    {
-//        if (!__production)
-//            console.log('还有有请求没有返回---return');
-    }
-
-//    if (marketRequestCount == 0 && marketIsSaveDone)
+//    if (tradeRequestCount == 0 && tradeIsSaveDone)
 //    {
-//        marketDataList.splice(0);
-//        marketIsSaveDone = 0;
-//        console.log('marketHistroy Start : '+marketIsSaveDone);
+//        tradeDataList.splice(0);
+//        tradeIsSaveDone = 0;
+//        console.log('tradeHistroy Start : '+tradeIsSaveDone);
 //
-//        for (;marketRequestCount<coin1List.length;marketRequestCount++)
+//        tradeCount++;
+//        console.log('tradeCount : ' + tradeCount);
+//
+//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
 //        {
 ////            if (!__production)
-////                console.log('创建请求 : '+marketRequestCount);
-//            marketHistory(coin1List[marketRequestCount],'cny');
+////                console.log('创建请求 : '+tradeRequestCount);
+//            tradeHistory(coin1List[tradeRequestCount],'cny');
 //        }
 //    }
 //    else
@@ -75,6 +59,28 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 ////        if (!__production)
 ////            console.log('还有有请求没有返回---return');
 //    }
+
+    if (marketRequestCount == 0 && marketIsSaveDone)
+    {
+        marketDataList.splice(0);
+        marketIsSaveDone = 0;
+        console.log('marketHistroy Start : '+marketIsSaveDone);
+
+        marketCount++;
+        console.log('marketCount : ' + marketCount);
+
+        for (;marketRequestCount<coin1List.length;marketRequestCount++)
+        {
+//            if (!__production)
+//                console.log('创建请求 : '+marketRequestCount);
+            marketHistory(coin1List[marketRequestCount],'cny');
+        }
+    }
+    else
+    {
+//        if (!__production)
+//            console.log('还有有请求没有返回---return');
+    }
 });
 
 var tradeHistory = function(coin1,coin2){
