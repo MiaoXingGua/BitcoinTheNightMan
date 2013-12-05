@@ -327,12 +327,12 @@ var saveAllObject = function(list,className){
 
         if (className == 'marketHistroy')
         {
-            console('marketHistroy Done');
+            console.log('marketHistroy Done');
             marketIsSaveDone = 1;
         }
         else if (className == 'tradeHistroy')
         {
-            console('tradeHistroy Done');
+            console.log('tradeHistroy Done');
             tradeIsSaveDone = 1;
         }
         else
