@@ -167,7 +167,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject(tradeDataList,'tradeHistroy');
+                saveAllTrade();
             }
 
             //推送
@@ -237,7 +237,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 
             if (tradeRequestCount == 0)
             {
-                saveAllObject(tradeDataList,'tradeHistroy');
+                saveAllTrade();
             }
         }
     });
@@ -246,9 +246,6 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
 var marketHistoryRequest = function(coin1,coin2){
 
     var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
-
-//    if (!__production)
-//        console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -285,7 +282,7 @@ var marketHistoryRequest = function(coin1,coin2){
 
             if (marketRequestCount == 0)
             {
-                saveAllObject(marketDataList,'marketHistroy');
+                saveAllMarket();
             }
 
         },
@@ -300,48 +297,93 @@ var marketHistoryRequest = function(coin1,coin2){
 
             if (marketRequestCount == 0)
             {
-                saveAllObject(marketDataList,'marketHistroy');
+                saveAllMarket();
             }
         }
     });
 }
 
-var saveAllObject = function(list,className){
+
+var saveAllTrade = function(){
 
     if (!__production)
-        console.log(className + ' : ' + 'save数组 ： ' + list.length);
+        console.log('tradeHistroy' + ' : ' + 'save数组 ： ' + tradeDataList.length);
 
-    AV.Object.saveAll(list,function(completeList,error){
+    AV.Object.saveAll(tradeDataList,function(completeList,error){
 
-//        console.log(typeof(list));
         if (completeList)
         {
-            console.log(className + ' : ' + list.length+' object is created ');
+            console.log('tradeHistroy' + ' : ' + completeList.length+' object is created ');
         }
         else
         {
-            console.error(className + ' : ' + list.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error('tradeHistroy' + ' : ' + completeList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
-        list.splice(0);
-
-        if (className == 'marketHistroy')
-        {
-            console.log('marketHistroy Done');
-            marketIsSaveDone = 1;
-        }
-        else if (className == 'tradeHistroy')
-        {
-            console.log('tradeHistroy Done');
-            tradeIsSaveDone = 1;
-        }
-        else
-        {
-            console.log('xxxxx');
-        }
+        tradeDataList.splice(0);
+        tradeIsSaveDone = 1;
+        console.log('tradeHistroy Done');
 
     });
 }
+
+var saveAllMarket = function(){
+
+    if (!__production)
+        console.log('marketHistroy' + ' : ' + 'save数组 ： ' + marketDataList.length);
+
+    AV.Object.saveAll(marketDataList,function(completeList,error){
+
+        if (completeList)
+        {
+            console.log('marketHistroy' + ' : ' + completeList.length+' object is created ');
+        }
+        else
+        {
+            console.error('marketHistroy' + ' : ' + completeList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+        }
+
+        marketDataList.splice(0);
+        marketIsSaveDone = 1;
+        console.log('marketHistroy Done');
+
+    });
+}
+
+//var saveAllObject = function(list,className){
+//
+//    if (!__production)
+//        console.log(className + ' : ' + 'save数组 ： ' + list.length);
+//
+//    AV.Object.saveAll(list,function(completeList,error){
+//
+//        if (completeList)
+//        {
+//            console.log(className + ' : ' + list.length+' object is created ');
+//        }
+//        else
+//        {
+//            console.error(className + ' : ' + list.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+//        }
+//
+//        list.splice(0);
+//
+//        if (className == 'marketHistroy')
+//        {
+//            console.log('marketHistroy Done');
+//            marketIsSaveDone = 1;
+//        }
+//        else if (className == 'tradeHistroy')
+//        {
+//            console.log('tradeHistroy Done');
+//            tradeIsSaveDone = 1;
+//        }
+//        else
+//        {
+//            console.log('xxxxx');
+//        }
+//    });
+//}
 
 
 //market
@@ -436,10 +478,6 @@ var refreashMarket = function(coin1,coin2){
     });
 }
 
-
-
-
-
 AV.Cloud.define("push", function(request, response) {
 
     var installationQuery = new AV.Query(Installation);
@@ -500,9 +538,6 @@ AV.Cloud.define("test", function(request, response) {
 AV.Cloud.define("get_coin", function(request, response) {
 
 });
-
-
-
 
 
 //生成guid
