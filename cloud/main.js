@@ -11,7 +11,7 @@ var MarketHistory = AV.Object.extend('MarketHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -68,6 +68,7 @@ var setIsRunning = function(type,run){
             if (object)
             {
                 object.set('isRunning',run);
+                if (run) object.increment('runCount');
                 object.save();
             }
             else
