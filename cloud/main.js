@@ -419,7 +419,7 @@ var marketHistoryRequest = function(coin1,coin2){
     var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
 
 //    if (!__production)
-        console.log(url);
+//        console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
@@ -439,7 +439,7 @@ var marketHistoryRequest = function(coin1,coin2){
 //                    if (!__production)
 //                        console.log('成功' + coin1 + '_' + coin2);
 //                    if (!__production)
-//                        console.log('剩余 ：' + marketRequestCount);
+                        console.log('剩余 ：' + marketRequestCount);
 
                     //保存数据
                     if (resultInfo.result)
@@ -464,7 +464,7 @@ var marketHistoryRequest = function(coin1,coin2){
 //                    if (!__production)
 //                        console.log('失败'+ coin1 + '_' + coin2);
 //                    if (!__production)
-//                        console.log('剩余 ：' + marketRequestCount);
+                        console.log('剩余 ：' + marketRequestCount);
                     if (!__production)
                     {
                         console.log('请求过于频繁');
@@ -487,7 +487,7 @@ var marketHistoryRequest = function(coin1,coin2){
 //            if (!__production)
 //                console.log('失败'+ coin1 + '_' + coin2);
 //            if (!__production)
-//                console.log('剩余 ：' + marketRequestCount);
+                console.log('剩余 ：' + marketRequestCount);
 
             if (marketRequestCount == 0)
             {
