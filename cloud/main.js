@@ -184,7 +184,7 @@ var alertRequest = function(requests, coin1,coin2){
 
             console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
 
-            if (isEmpty(requests)){
+            if (isEmpty(requests))
             {
 				console.log('done in success');
             }
@@ -196,7 +196,6 @@ var alertRequest = function(requests, coin1,coin2){
 
             console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
 			if (isEmpty(requests)){
-            {
 				console.log('done in error');
             }
         }
