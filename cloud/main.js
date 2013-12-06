@@ -61,7 +61,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                 return;
             delete requests[coin1];
 
-                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
+//                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
 
             if (isEmpty(requests))
             {
@@ -79,7 +79,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                 return;
             delete requests[coin1];
 
-                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+//                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
 
             if (isEmpty(requests))
             {
