@@ -66,7 +66,6 @@ var getIsRunning = function(type,block){
 
 var setIsRunning = function(type,run,block){
 
-
     var query = new AV.Query(RequestController);
     query.equalTo('type',type);
     query.first({
@@ -74,47 +73,36 @@ var setIsRunning = function(type,run,block){
 
             if (object)
             {
+                object.set('isRunning',run);
+                if (run) object.increment('runCount');
+                if (run) console.log('set running : true');
+                if (!run) console.log('set running : false');
 
-                    object.set('isRunning',run);
-                    if (run) object.increment('runCount');
-                    if (run) console.log('set running : true');
-                    if (!run) console.log('set running : false');
-//                try {
-                    object.save(null, {
+                object.save(null, {
 
-                        success: function(object) {
+                    success: function(object) {
 
-                            var isRunning = object.get('isRunning');
-                            if (isRunning == run)
+                        var isRunning = object.get('isRunning');
+                        if (isRunning == run)
+                        {
+                            console.log('set running success');
+                            if (typeof(block) == 'function' )
                             {
-                                console.log('set running success');
-                                if (typeof(block) == 'function' )
-                                {
-                                    block(isRunning);
-                                }
+                                block(isRunning);
                             }
-                            else
-                            {
-                                console.log('set running is failed');
-                                setIsRunning(type,run,block);
-                            }
-
-                        },
-                        error: function(object, error) {
-
-                            console.error('set running is failed with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
                         }
-                    });
-//                }
-//                catch (e)
-//                {
-//                    if (!__production)
-//                    {
-//                        console.dir(e);
-//                        console.dir(httpResponse.text)
-//                    }
-//                }
+                        else
+                        {
+                            console.log('set running is failed');
+                            setIsRunning(type,run,block);
+                        }
 
+                    },
+                    error: function(object, error) {
+
+                        console.error('set running is failed with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+                    }
+                });
             }
             else
             {
@@ -208,7 +196,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
                 if (isRunning)
                 {
                     marketDataList = new Array();
-                    marketRequestCount = 0;
+//                    marketRequestCount = 0;
 
                     console.log('marketHistroy Start');
 
