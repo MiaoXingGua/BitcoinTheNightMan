@@ -467,9 +467,9 @@ var marketHistoryRequest = function(coin1,coin2){
                     resultInfo = JSON.parse(httpResponse.text);
 
 //                    if (!__production)
-                        console.log('成功' + coin1 + '_' + coin2);
+//                        console.log('成功' + coin1 + '_' + coin2);
 //                    if (!__production)
-                        console.log('剩余 ：' + marketRequestCount);
+//                        console.log('剩余 ：' + marketRequestCount);
 
                     //保存数据
                     if (resultInfo.result)
@@ -492,9 +492,9 @@ var marketHistoryRequest = function(coin1,coin2){
                 } catch(e) {
 
 //                    if (!__production)
-                        console.log('失败'+ coin1 + '_' + coin2);
+//                        console.log('失败'+ coin1 + '_' + coin2);
 //                    if (!__production)
-                        console.log('剩余 ：' + marketRequestCount);
+//                        console.log('剩余 ：' + marketRequestCount);
                     if (!__production)
                     {
                         console.log('请求过于频繁');
@@ -515,9 +515,9 @@ var marketHistoryRequest = function(coin1,coin2){
             --marketRequestCount;
 
 //            if (!__production)
-                console.log('失败'+ coin1 + '_' + coin2);
+//                console.log('失败'+ coin1 + '_' + coin2);
 //            if (!__production)
-                console.log('剩余 ：' + marketRequestCount);
+//                console.log('剩余 ：' + marketRequestCount);
 
             if (marketRequestCount <= 0)
             {
