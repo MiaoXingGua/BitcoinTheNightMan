@@ -158,6 +158,10 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
         var requests = {}
         for (var i=0;i<coin1List.length;i++){
 			var coin = coin1List[i];
+			requests.coin = coin;
+        }
+        for (var i=0;i<coin1List.length;i++){
+			var coin = coin1List[i];
             alertRequest(requests, coin, 'cny');
         }
     });
@@ -173,8 +177,6 @@ function length(obj){
 
 var alertRequest = function(requests, coin1,coin2){
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
-	//remeber the request url.
-	requests.coin1 = url;
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
