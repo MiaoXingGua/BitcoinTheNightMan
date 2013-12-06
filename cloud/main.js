@@ -154,7 +154,7 @@ AV.Cloud.define("reset_running", function(request, response) {
 
 //} );
 
-var alertRequestCount;
+var alertRequestCount = 0;
 
 AV.Cloud.setInterval('coin_alert', 5, function(){
 
@@ -167,9 +167,9 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
                   if (isRunning)
                   {
                     alertRequestCount = 0;
-                    for (var i=0;i<coin1List.length;i++)
+                    for (var i=0;i<10;i++)
                     {
-                        alertRequest(coin1List[i],'cny');
+                        alertRequest();
                     }
                   }
             });
@@ -177,91 +177,17 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
     });
 });
 
-var alertRequest = function(coin1,coin2){
+var alertRequest = function(){
 
     ++alertRequestCount;
-    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+    var url = 'http://www.baidu.com/';
     AV.Cloud.httpRequest({
         url: url,
-//            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-//            console.log(httpResponse.text);
             --alertRequestCount;
 
-//            if (!__production)
-//                console.log('成功' + coin1 + '_' + coin2);
-//            if (!__production)
-                console.log('剩余 ：' + alertRequestCount);
-
-            var resultInfo ;
-            try {
-                resultInfo = JSON.parse(httpResponse.text);
-
-                //推送
-                if (resultInfo.result && 0)
-                {
-                    var resultDataList = resultInfo.data;
-                    resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
-
-                    var lastPrice = resultDataList[0].price;
-                    console.log('lastPrice : ' + lastPrice);
-
-                    var coinQuery = new AV.Query(Coin);
-                    coinQuery.equalTo('coin1', coin1);
-                    coinQuery.equalTo('coin2', coin2);
-
-                    var maxQuery = new AV.Query(UserFavicon);
-                    maxQuery.matchesQuery('coin', coinQuery);
-                    maxQuery.equalTo('isPush', true);
-                    maxQuery.exists('maxValue');
-                    maxQuery.notEqualTo('maxValue', 0);
-                    maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
-
-                    var minQuery = new AV.Query(UserFavicon);
-                    minQuery.matchesQuery('coin', coinQuery);
-                    minQuery.equalTo('isPush', true);
-                    minQuery.exists('minValue');
-                    minQuery.notEqualTo('minValue', 0);
-                    minQuery.greaterThanOrEqualTo("minValue", lastPrice);
-
-                    var mainQuery = AV.Query.or(maxQuery, minQuery);
-                    mainQuery.find({
-                        success: function(results) {
-
-                            console.log('2 : '+results.length);
-//                              var userList = new Array();
-                            for (var userFav in results)
-                            {
-                                var user = results.get('user');
-                                var userId = AV.Object.createWithoutData("_User", user.id);
-                                var installationQuery = new AV.Query(Installation);
-                                installationQuery.equalTo('user', userId);
-
-                                AV.Push.send({
-//                                    channels: [ "Public" ],
-                                    where: installationQuery,
-                                    data: {
-                                        alert: "哈哈哈"
-                                    }
-                                });
-                            }
-                            // results contains a list of players that either have won a lot of games or won only a few games.
-                        },
-                        error: function(error) {
-                            // There was an error.
-                        }
-                    });
-                }
-
-            } catch(e) {
-                if (!__production)
-                {
-                    console.log('请求过于频繁');
-                    console.dir(e);
-                    console.dir(httpResponse.text)
-                }
-            }
+            console.log('剩余 ：' + alertRequestCount);
 
             if (alertRequestCount == 0)
             {
@@ -279,10 +205,7 @@ var alertRequest = function(coin1,coin2){
 
             --alertRequestCount;
 
-//            if (!__production)
-//                console.log('失败'+ coin1 + '_' + coin2);
-//            if (!__production)
-                console.log('剩余 ：' + alertRequestCount);
+            console.log('剩余 ：' + alertRequestCount);
 
             if (alertRequestCount == 0)
             {
@@ -298,6 +221,131 @@ var alertRequest = function(coin1,coin2){
         }
     });
 }
+
+//var alertRequest = function(coin1,coin2){
+//
+//    ++alertRequestCount;
+//    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+//    AV.Cloud.httpRequest({
+//        url: url,
+////            secureProtocol : 'SSLv1_method',
+//        success: function(httpResponse) {
+//
+////            console.log(httpResponse.text);
+//            --alertRequestCount;
+//
+////            if (!__production)
+////                console.log('成功' + coin1 + '_' + coin2);
+////            if (!__production)
+//                console.log('剩余 ：' + alertRequestCount);
+//
+//            var resultInfo ;
+//            try {
+//                resultInfo = JSON.parse(httpResponse.text);
+//
+//                //推送
+//                if (resultInfo.result && 0)
+//                {
+//                    var resultDataList = resultInfo.data;
+//                    resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
+//
+//                    var lastPrice = resultDataList[0].price;
+//                    console.log('lastPrice : ' + lastPrice);
+//
+//                    var coinQuery = new AV.Query(Coin);
+//                    coinQuery.equalTo('coin1', coin1);
+//                    coinQuery.equalTo('coin2', coin2);
+//
+//                    var maxQuery = new AV.Query(UserFavicon);
+//                    maxQuery.matchesQuery('coin', coinQuery);
+//                    maxQuery.equalTo('isPush', true);
+//                    maxQuery.exists('maxValue');
+//                    maxQuery.notEqualTo('maxValue', 0);
+//                    maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
+//
+//                    var minQuery = new AV.Query(UserFavicon);
+//                    minQuery.matchesQuery('coin', coinQuery);
+//                    minQuery.equalTo('isPush', true);
+//                    minQuery.exists('minValue');
+//                    minQuery.notEqualTo('minValue', 0);
+//                    minQuery.greaterThanOrEqualTo("minValue", lastPrice);
+//
+//                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+//                    mainQuery.find({
+//                        success: function(results) {
+//
+//                            console.log('2 : '+results.length);
+////                              var userList = new Array();
+//                            for (var userFav in results)
+//                            {
+//                                var user = results.get('user');
+//                                var userId = AV.Object.createWithoutData("_User", user.id);
+//                                var installationQuery = new AV.Query(Installation);
+//                                installationQuery.equalTo('user', userId);
+//
+//                                AV.Push.send({
+////                                    channels: [ "Public" ],
+//                                    where: installationQuery,
+//                                    data: {
+//                                        alert: "哈哈哈"
+//                                    }
+//                                });
+//                            }
+//                            // results contains a list of players that either have won a lot of games or won only a few games.
+//                        },
+//                        error: function(error) {
+//                            // There was an error.
+//                        }
+//                    });
+//                }
+//
+//            } catch(e) {
+//                if (!__production)
+//                {
+//                    console.log('请求过于频繁');
+//                    console.dir(e);
+//                    console.dir(httpResponse.text)
+//                }
+//            }
+//
+//            if (alertRequestCount == 0)
+//            {
+//                setIsRunning('alert',false,function(isRunning){
+//
+//                    if (!isRunning)
+//                        console.log('alerty Done ');
+//                    else
+//                        console.log('alert Not Done !!!!!!!!');
+//
+//                });
+//            }
+//        },
+//        error: function(httpResponse) {
+//
+//            --alertRequestCount;
+//
+////            if (!__production)
+////                console.log('失败'+ coin1 + '_' + coin2);
+////            if (!__production)
+//                console.log('剩余 ：' + alertRequestCount);
+//
+//            if (alertRequestCount == 0)
+//            {
+//                setIsRunning('alert',false,function(isRunning){
+//
+//                    if (!isRunning)
+//                        console.log('alerty Done ');
+//                    else
+//                        console.log('alert Not Done !!!!!!!!');
+//
+//                });
+//            }
+//        }
+//    });
+//}
+
+
+
 
 //AV.Cloud.setInterval('coin_request', 5, function(){
 
