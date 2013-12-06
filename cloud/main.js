@@ -647,21 +647,38 @@ var saveAllMarket = function(){
     if (!__production)
         console.log('marketHistroy' + ' : ' + 'save数组 ： ' + marketDataList.length);
 
-    var dataList = marketDataList.slice(0);
-    marketDataList.splice(0);
-    AV.Object.saveAll(dataList,function(completeList,error){
 
-        if (completeList)
-        {
-            console.log('marketHistroy' + ' : ' + completeList.length+' object is created ');
-        }
-        else
-        {
-            console.error('marketHistroy' + ' : ' + dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
-        }
+    if (marketDataList.length>0 && typeof(marketDataList)=='object')
+    {
+        var dataList = marketDataList.slice(0);
+        marketDataList.splice(0);
+
+        AV.Object.saveAll(dataList,function(completeList,error){
+
+            if (completeList)
+            {
+                console.log('marketHistroy' + ' : ' + completeList.length+' object is created ');
+            }
+            else
+            {
+                console.error('marketHistroy' + ' : ' + dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            }
 
 
 //        marketIsSaveDone = 1;
+            setIsRunning('market',false,function(isRunning){
+
+                if (!isRunning)
+                    console.log('marketHistroy Done ');
+                else
+                    console.log('marketHistroy Not Done !!!!!!!!');
+
+            });
+
+        });
+    }
+    else
+    {
         setIsRunning('market',false,function(isRunning){
 
             if (!isRunning)
@@ -670,8 +687,12 @@ var saveAllMarket = function(){
                 console.log('marketHistroy Not Done !!!!!!!!');
 
         });
+    }
 
-    });
+
+
+
+
 }
 
 var saveAllDepth = function(){
