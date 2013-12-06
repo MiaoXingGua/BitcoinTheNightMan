@@ -1375,7 +1375,7 @@ if (__production){
                     return;
                 delete requests[coin1];
 
-                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
+//                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
 
                 if (isEmpty(requests))
                 {
@@ -1388,7 +1388,7 @@ if (__production){
                     return;
                 delete requests[coin1];
 
-                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+//                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
 
                 if (isEmpty(requests))
                 {
@@ -1402,7 +1402,7 @@ if (__production){
 var alertPush = function(){
 
   var query = new AV.Query(RequestController);
-  query.equalTo('type',type);
+  query.equalTo('type','market');
   query.first({
       success: function(object) {
 
