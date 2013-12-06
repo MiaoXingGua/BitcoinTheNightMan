@@ -188,37 +188,37 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 //    });
 
     //交易行情 API
-//    getIsRunning('market',function(isRunning){
-//
-//        if (!isRunning)
-//        {
-//            setIsRunning('market',true,function(isRunning){
-//
-//                if (isRunning)
-//                {
-//                    marketDataList = new Array();
-////                    marketRequestCount = 0;
-//
-//                    console.log('marketHistroy Start');
-//
-////            if (!__production)
-////                console.log('marketCount : ' + marketCount++);
-//
-//                    for (var i=0;i<coin1List.length;i++)
-//                    {
-////            if (!__production)
-////                console.log('创建请求 : '+marketRequestCount);
-//                        marketHistory(coin1List[i],'cny');
-//                    }
-//                }
-//            });
-//        }
-//        else
-//        {
-////        if (!__production)
-////            console.log('还有有请求没有返回---return');
-//        }
-//    });
+    getIsRunning('market',function(isRunning){
+
+        if (!isRunning)
+        {
+            setIsRunning('market',true,function(isRunning){
+
+                if (isRunning)
+                {
+                    marketDataList = new Array();
+//                    marketRequestCount = 0;
+
+                    console.log('marketHistroy Start');
+
+//            if (!__production)
+//                console.log('marketCount : ' + marketCount++);
+
+                    for (var i=0;i<coin1List.length;i++)
+                    {
+//            if (!__production)
+//                console.log('创建请求 : '+marketRequestCount);
+                        marketHistory(coin1List[i],'cny');
+                    }
+                }
+            });
+        }
+        else
+        {
+//        if (!__production)
+//            console.log('还有有请求没有返回---return');
+        }
+    });
 
     //市场深度 API
 //    getIsRunning('depth',function(isRunning){
