@@ -20,7 +20,6 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 
-
 var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','src','tag','tix','wdc','xpm','yac','zcc'];
 
 //jry bsc trc
@@ -31,12 +30,9 @@ var tradeRequestCount = 0;
 var marketRequestCount = 0;
 var depthRequestCount = 0;
 
-//var tradeIsSaveDone = 1;
-//var marketIsSaveDone = 1;
-
 var tradeCount = 0;
 var marketCount = 0;
-var    depthCount = 0;
+var depthCount = 0;
 
 var tradeDataList;
 var marketDataList;
@@ -176,11 +172,11 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 //                console.log('marketCount : ' + marketCount++);
 
 
-            for (;marketRequestCount<coin1List.length;marketRequestCount++)
+            for (var i=0;i<coin1List.length;i++)
             {
 //            if (!__production)
 //                console.log('创建请求 : '+marketRequestCount);
-                marketHistory(coin1List[marketRequestCount],'cny');
+                marketHistory(coin1List[i],'cny');
             }
         }
         else
@@ -420,6 +416,7 @@ var marketHistoryRequest = function(coin1,coin2){
 
 //    if (!__production)
 //        console.log(url);
+    ++marketRequestCount;
 
     AV.Cloud.httpRequest({
         url: url,
