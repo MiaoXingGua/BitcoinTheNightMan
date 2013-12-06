@@ -166,7 +166,7 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
 
                   if (isRunning)
                   {
-                    alertRequestCount = 0;
+//                    alertRequestCount = 0;
                     for (var i=0;i<coin1List.length;i++)
                     {
                         alertRequest(coin1List[i],'cny');
