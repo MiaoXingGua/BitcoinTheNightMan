@@ -38,9 +38,9 @@ var tradeCount = 0;
 var marketCount = 0;
 var    depthCount = 0;
 
-var tradeDataList = new Array();
-var marketDataList = new Array();
-var depthDataList = new Array();
+var tradeDataList;
+var marketDataList;
+var depthDataList;
 
 var getIsRunning = function(type,block){
 
@@ -131,34 +131,34 @@ AV.Cloud.define("reset_running", function(request, response) {
 AV.Cloud.setInterval('coin_request', 5, function(){
 
     //历史成交记录 API
-    getIsRunning('trade',function(isRunning){
-
-        if (tradeRequestCount == 0 && !isRunning)
-        {
-            tradeDataList = new Array();
-//            marketIsSaveDone = 0;
-
-            setIsRunning('trade',true);
-
-            console.log('tradeHistroy Start');
-
-//            if (!__production)
-//                console.log('tradeCount : ' + tradeCount++);
-
-
-            for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-            {
-//            if (!__production)
-//                console.log('创建请求 : '+marketRequestCount);
-                tradeHistory(coin1List[tradeRequestCount],'cny');
-            }
-        }
-        else
-        {
-//        if (!__production)
-//            console.log('还有有请求没有返回---return');
-        }
-    });
+//    getIsRunning('trade',function(isRunning){
+//
+//        if (tradeRequestCount == 0 && !isRunning)
+//        {
+//            tradeDataList = new Array();
+//            tradeRequestCount = 0;
+//
+//            setIsRunning('trade',true);
+//
+//            console.log('tradeHistroy Start');
+//
+////            if (!__production)
+////                console.log('tradeCount : ' + tradeCount++);
+//
+//
+//            for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
+//            {
+////            if (!__production)
+////                console.log('创建请求 : '+marketRequestCount);
+//                tradeHistory(coin1List[tradeRequestCount],'cny');
+//            }
+//        }
+//        else
+//        {
+////        if (!__production)
+////            console.log('还有有请求没有返回---return');
+//        }
+//    });
 
     //交易行情 API
     getIsRunning('market',function(isRunning){
@@ -166,7 +166,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
         if (!isRunning)
         {
             marketDataList = new Array();
-//            marketIsSaveDone = 0;
+            marketRequestCount = 0;
 
             setIsRunning('market',true);
 
@@ -191,34 +191,34 @@ AV.Cloud.setInterval('coin_request', 5, function(){
     });
 
     //市场深度 API
-    getIsRunning('depth',function(isRunning){
-
-        if (!isRunning)
-        {
-            depthDataList = new Array();
-//            marketIsSaveDone = 0;
-
-            setIsRunning('depth',true);
-
-            console.log('depthHistroy Start');
-
-//            if (!__production)
-//                console.log('depthCount : ' + depthCount++);
-
-
-            for (;depthRequestCount<coin1List.length;depthRequestCount++)
-            {
-//            if (!__production)
-//                console.log('创建请求 : '+marketRequestCount);
-                depthHistory(coin1List[depthRequestCount],'cny');
-            }
-        }
-        else
-        {
-//        if (!__production)
-//            console.log('还有有请求没有返回---return');
-        }
-    });
+//    getIsRunning('depth',function(isRunning){
+//
+//        if (!isRunning)
+//        {
+//            depthDataList = new Array();
+//            depthRequestCount = 0;
+//
+//            setIsRunning('depth',true);
+//
+//            console.log('depthHistroy Start');
+//
+////            if (!__production)
+////                console.log('depthCount : ' + depthCount++);
+//
+//
+//            for (;depthRequestCount<coin1List.length;depthRequestCount++)
+//            {
+////            if (!__production)
+////                console.log('创建请求 : '+marketRequestCount);
+//                depthHistory(coin1List[depthRequestCount],'cny');
+//            }
+//        }
+//        else
+//        {
+////        if (!__production)
+////            console.log('还有有请求没有返回---return');
+//        }
+//    });
 
 });
 
@@ -419,7 +419,7 @@ var marketHistoryRequest = function(coin1,coin2){
     var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
 
 //    if (!__production)
-//        console.log(url);
+        console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
