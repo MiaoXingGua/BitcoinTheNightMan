@@ -187,7 +187,7 @@ var alertRequest = function(coin1,coin2){
 
             --alertRequestCount;
 
-            console.log('剩余 ：' + alertRequestCount);
+            console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' + alertRequestCount);
 
             if (alertRequestCount == 0)
             {
@@ -205,7 +205,8 @@ var alertRequest = function(coin1,coin2){
 
             --alertRequestCount;
 
-            console.log('剩余 ：' + alertRequestCount);
+            console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + alertRequestCount);
+
 
             if (alertRequestCount == 0)
             {
