@@ -459,8 +459,8 @@ var marketHistoryRequest = function(coin1,coin2){
 //            console.log(httpResponse.text);
             --marketRequestCount;
 
-//            if (httpResponse.text && typeof(httpResponse.text) == 'string')
-//            {
+            if (marketRequestCount>=0)
+            {
 
                 var resultInfo ;
                 try {
@@ -502,9 +502,9 @@ var marketHistoryRequest = function(coin1,coin2){
                         console.dir(httpResponse.text)
                     }
                 }
-//            }
+            }
 
-            if (marketRequestCount == 0)
+            if (marketRequestCount <= 0)
             {
                 saveAllMarket();
             }
@@ -519,7 +519,7 @@ var marketHistoryRequest = function(coin1,coin2){
 //            if (!__production)
                 console.log('剩余 ：' + marketRequestCount);
 
-            if (marketRequestCount == 0)
+            if (marketRequestCount <= 0)
             {
                 saveAllMarket();
             }
@@ -543,6 +543,7 @@ var depthHistoryRequest = function(coin1,coin2){
             --depthRequestCount;
 
             var resultInfo ;
+
             try {
                 resultInfo = JSON.parse(httpResponse.text);
 
@@ -646,18 +647,20 @@ var saveAllMarket = function(){
     if (!__production)
         console.log('marketHistroy' + ' : ' + 'save数组 ： ' + marketDataList.length);
 
-    AV.Object.saveAll(marketDataList,function(completeList,error){
+    var dataList = marketDataList.slice(0);
+    marketDataList.splice(0);
+    AV.Object.saveAll(dataList,function(completeList,error){
 
         if (completeList)
         {
-            console.log('marketHistroy' + ' : ' + marketDataList.length+' object is created ');
+            console.log('marketHistroy' + ' : ' + completeList.length+' object is created ');
         }
         else
         {
-            console.error('marketHistroy' + ' : ' + marketDataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+            console.error('marketHistroy' + ' : ' + dataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
         }
 
-        marketDataList.splice(0);
+
 //        marketIsSaveDone = 1;
         setIsRunning('market',false,function(isRunning){
 
