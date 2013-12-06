@@ -19,7 +19,7 @@ AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
 });
 
-AV.Cloud.setInterval('coin_alert', 5, function(){
+AV.Cloud.setInterval('coin_alert', 5, function(done){
     lock.sync('coin_alert', 15000, function(){
         var requests = {}
         for (var i=0;i<coin1List.length;i++)
@@ -45,7 +45,7 @@ function length(obj)
     return Object.keys(obj).length;
 }
 
-var alertRequest = function(requests, coin1,coin2)
+var alertRequest = function(requests, coin1,coin2, done)
 {
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     AV.Cloud.httpRequest({
@@ -59,8 +59,13 @@ var alertRequest = function(requests, coin1,coin2)
 
             if (isEmpty(requests))
             {
-                alertPush();
-                console.log('done in success');
+                try{
+					alertPush();
+					console.log('done in success');
+				}finally{
+					done();
+				}
+
             }
         },
         error: function(httpResponse) {
@@ -72,8 +77,12 @@ var alertRequest = function(requests, coin1,coin2)
 
             if (isEmpty(requests))
             {
-                alertPush();
-                console.log('done in error');
+                try{
+					alertPush();
+					console.log('done in error');
+				}finally{
+					done();
+				}
             }
         }
     });
@@ -1282,6 +1291,3 @@ var alertRequest = function(requests, coin1,coin2){
     }
 
 }
-
-
-
