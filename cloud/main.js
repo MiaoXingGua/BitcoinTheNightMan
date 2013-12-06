@@ -8,10 +8,11 @@ var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
 var TradeHistory = AV.Object.extend('TradeHistory');
 var MarketHistory = AV.Object.extend('MarketHistory');
+var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -20,7 +21,7 @@ AV.Cloud.define("hello", function(request, response) {
 
 
 
-var coin1List = ['btc','btb','ltc','ftc','frc','ppc','wdc','yac','cnc','bqc','ifc','zcc','cmc','xpm','pts','tag','tix','src','mec','nmc','qrk','btb','exc','dtc','cent'];
+var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','src','tag','tix','wdc','xpm','yac','zcc'];
 
 //jry bsc trc
 
@@ -28,14 +29,18 @@ var coin2List = ['cny'];
 
 var tradeRequestCount = 0;
 var marketRequestCount = 0;
+var depthRequestCount = 0;
 
-var tradeIsSaveDone = 1;
-var marketIsSaveDone = 1;
+//var tradeIsSaveDone = 1;
+//var marketIsSaveDone = 1;
 
 var tradeCount = 0;
 var marketCount = 0;
+var    depthCount = 0;
+
 var tradeDataList = new Array();
 var marketDataList = new Array();
+var depthDataList = new Array();
 
 var getIsRunning = function(type,block){
 
@@ -87,6 +92,7 @@ var setIsRunning = function(type,run){
 AV.Cloud.define("reset_running", function(request, response) {
     setIsRunning('trade',false);
     setIsRunning('market',false);
+    setIsRunning('depth',false);
     console.log("reset_running");
 });
 
@@ -124,30 +130,7 @@ AV.Cloud.define("reset_running", function(request, response) {
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
-//    console.log(tradeIsSaveDone +' : ' + marketIsSaveDone);
-
-//    if (tradeRequestCount == 0 && tradeIsSaveDone)
-//    {
-//        tradeDataList.splice(0);
-//        tradeIsSaveDone = 0;
-//        console.log('tradeHistroy Start : '+tradeIsSaveDone);
-//
-//        tradeCount++;
-//        console.log('tradeCount : ' + tradeCount);
-//
-//        for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
-//        {
-////            if (!__production)
-////                console.log('创建请求 : '+tradeRequestCount);
-//            tradeHistory(coin1List[tradeRequestCount],'cny');
-//        }
-//    }
-//    else
-//    {
-////        if (!__production)
-////            console.log('还有有请求没有返回---return');
-//    }
-
+    //历史成交记录 API
     getIsRunning('trade',function(isRunning){
 
         if (tradeRequestCount == 0 && !isRunning)
@@ -159,8 +142,8 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
             console.log('tradeHistroy Start');
 
-            if (!__production)
-                console.log('tradeCount : ' + tradeCount++);
+//            if (!__production)
+//                console.log('tradeCount : ' + tradeCount++);
 
 
             for (;tradeRequestCount<coin1List.length;tradeRequestCount++)
@@ -177,9 +160,10 @@ AV.Cloud.setInterval('coin_request', 5, function(){
         }
     });
 
+    //交易行情 API
     getIsRunning('market',function(isRunning){
 
-        if (marketRequestCount == 0 && !isRunning)
+        if (!isRunning)
         {
             marketDataList.splice(0);
 //            marketIsSaveDone = 0;
@@ -188,11 +172,8 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
             console.log('marketHistroy Start');
 
-            if (!__production)
-            {
-                marketCount++;
-                console.log('marketCount : ' + marketCount);
-            }
+//            if (!__production)
+//                console.log('marketCount : ' + marketCount++);
 
 
             for (;marketRequestCount<coin1List.length;marketRequestCount++)
@@ -209,6 +190,35 @@ AV.Cloud.setInterval('coin_request', 5, function(){
         }
     });
 
+    //市场深度 API
+    getIsRunning('depth',function(isRunning){
+
+        if (!isRunning)
+        {
+            depthDataList.splice(0);
+//            marketIsSaveDone = 0;
+
+            setIsRunning('depth',true);
+
+            console.log('depthHistroy Start');
+
+//            if (!__production)
+//                console.log('depthCount : ' + depthCount++);
+
+
+            for (;depthRequestCount<coin1List.length;depthRequestCount++)
+            {
+//            if (!__production)
+//                console.log('创建请求 : '+marketRequestCount);
+                depthHistory(coin1List[depthRequestCount],'cny');
+            }
+        }
+        else
+        {
+//        if (!__production)
+//            console.log('还有有请求没有返回---return');
+        }
+    });
 
 });
 
@@ -248,7 +258,13 @@ var tradeHistory = function(coin1,coin2){
 
 var marketHistory = function(coin1,coin2){
 
- marketHistoryRequest(coin1,coin2);
+    marketHistoryRequest(coin1,coin2);
+
+}
+
+var depthHistory = function(coin1,coin2){
+
+    depthHistoryRequest(coin1,coin2);
 
 }
 
@@ -263,31 +279,36 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
         var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     }
 
-    if (!__production)
-         console.log(url);
+//    if (!__production)
+//         console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-            if (typeof(httpResponse.text) !== 'string')
-            {
-                var resultInfo = JSON.parse(httpResponse.text);
+//            console.log(httpResponse.text);
+            --tradeRequestCount;
 
-//            console.dir(httpResponse.headers);
+            var resultInfo ;
+            try {
+                resultInfo = JSON.parse(httpResponse.text);
 
-                --tradeRequestCount;
-
-//            if (!__production)
-//                console.log('成功' + coin1 + '_' + coin2);
-//            if (!__production)
-//                console.log('剩余 ：' + tradeRequestCount);
+//                if (!__production)
+//                    console.log('成功' + coin1 + '_' + coin2);
+//                if (!__production)
+//                    console.log('剩余 ：' + marketRequestCount);
 
                 //保存数据
                 if (resultInfo.result)
                 {
-                    for (var i=0;i<resultInfo.data.length;i++)
+                    var resultDataList = resultInfo.data;
+                    resultDataList.sort(function(data1,data2){return parseInt(data1.tid) <parseInt(data2.tid)?1:-1});
+
+                    var count = resultDataList.length;
+                    if (count > 100)  count=100;
+
+                    for (var i=resultInfo.data.length-1;i>=resultDataList.length-count;i--)
                     {
                         var data = resultInfo.data[i];
 //                    console.dir(data.price +' ---  '+parseFloat(data.price));
@@ -302,68 +323,78 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                         trade.set('coin2',coin2);
                         tradeDataList.push(trade);
                     }
+
+//                    console.log('tradeDataList长度 : '+tradeDataList.length);
+                }
+
+                //推送
+                if (resultInfo.result && 0)
+                {
+                    var resultDataList = resultInfo.data;
+                    resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
+
+                    var lastPrice = resultDataList[0].price;
+                    console.log('lastPrice : ' + lastPrice);
+
+                    var coinQuery = new AV.Query(Coin);
+                    coinQuery.equalTo('coin1', coin1);
+                    coinQuery.equalTo('coin2', coin2);
+
+                    var maxQuery = new AV.Query(UserFavicon);
+                    maxQuery.matchesQuery('coin', coinQuery);
+                    maxQuery.equalTo('isPush', true);
+                    maxQuery.exists('maxValue');
+                    maxQuery.notEqualTo('maxValue', 0);
+                    maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
+
+                    var minQuery = new AV.Query(UserFavicon);
+                    minQuery.matchesQuery('coin', coinQuery);
+                    minQuery.equalTo('isPush', true);
+                    minQuery.exists('minValue');
+                    minQuery.notEqualTo('minValue', 0);
+                    minQuery.greaterThanOrEqualTo("minValue", lastPrice);
+
+                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+                    mainQuery.find({
+                        success: function(results) {
+
+                            console.log('2 : '+results.length);
+//                              var userList = new Array();
+                            for (var userFav in results)
+                            {
+                                var user = results.get('user');
+                                var userId = AV.Object.createWithoutData("_User", user.id);
+                                var installationQuery = new AV.Query(Installation);
+                                installationQuery.equalTo('user', userId);
+
+                                AV.Push.send({
+//                                    channels: [ "Public" ],
+                                    where: installationQuery,
+                                    data: {
+                                        alert: "哈哈哈"
+                                    }
+                                });
+                            }
+                            // results contains a list of players that either have won a lot of games or won only a few games.
+                        },
+                        error: function(error) {
+                            // There was an error.
+                        }
+                    });
+                }
+
+            } catch(e) {
+                if (!__production)
+                {
+                    console.log('请求过于频繁');
+                    console.dir(e);
+                    console.dir(httpResponse.text)
                 }
             }
 
             if (tradeRequestCount == 0)
             {
                 saveAllTrade();
-            }
-
-            //推送
-            if (resultInfo.result && 0)
-            {
-                var resultDataList = resultInfo.data;
-                resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
-
-                var lastPrice = resultDataList[0].price;
-                console.log('lastPrice : ' + lastPrice);
-
-                var coinQuery = new AV.Query(Coin);
-                coinQuery.equalTo('coin1', coin1);
-                coinQuery.equalTo('coin2', coin2);
-
-                var maxQuery = new AV.Query(UserFavicon);
-                maxQuery.matchesQuery('coin', coinQuery);
-                maxQuery.equalTo('isPush', true);
-                maxQuery.exists('maxValue');
-                maxQuery.notEqualTo('maxValue', 0);
-                maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
-
-                var minQuery = new AV.Query(UserFavicon);
-                minQuery.matchesQuery('coin', coinQuery);
-                minQuery.equalTo('isPush', true);
-                minQuery.exists('minValue');
-                minQuery.notEqualTo('minValue', 0);
-                minQuery.greaterThanOrEqualTo("minValue", lastPrice);
-
-                var mainQuery = AV.Query.or(maxQuery, minQuery);
-                mainQuery.find({
-                    success: function(results) {
-
-                        console.log('2 : '+results.length);
-//                              var userList = new Array();
-                        for (var userFav in results)
-                        {
-                            var user = results.get('user');
-                            var userId = AV.Object.createWithoutData("_User", user.id);
-                            var installationQuery = new AV.Query(Installation);
-                            installationQuery.equalTo('user', userId);
-
-                            AV.Push.send({
-//                                    channels: [ "Public" ],
-                                where: installationQuery,
-                                data: {
-                                    alert: "哈哈哈"
-                                }
-                            });
-                        }
-                        // results contains a list of players that either have won a lot of games or won only a few games.
-                    },
-                    error: function(error) {
-                        // There was an error.
-                    }
-                });
             }
         },
         error: function(httpResponse) {
@@ -387,44 +418,61 @@ var marketHistoryRequest = function(coin1,coin2){
 
     var url = 'http://cn.bter.com/api/1/ticker/'+coin1+'_'+coin2;
 
-    if (!__production)
-        console.log(url);
+//    if (!__production)
+//        console.log(url);
 
     AV.Cloud.httpRequest({
         url: url,
 //            secureProtocol : 'SSLv1_method',
         success: function(httpResponse) {
 
-            if (typeof(httpResponse.text) !== 'string')
-            {
-                var resultInfo = JSON.parse(httpResponse.text);
+//            console.log(httpResponse.text);
+            --marketRequestCount;
 
-                --marketRequestCount;
+//            if (httpResponse.text && typeof(httpResponse.text) == 'string')
+//            {
 
-            if (!__production)
-                console.log('成功' + coin1 + '_' + coin2);
-            if (!__production)
-                console.log('剩余 ：' + marketRequestCount);
+                var resultInfo ;
+                try {
+                    resultInfo = JSON.parse(httpResponse.text);
 
-                //保存数据
-                if (resultInfo.result)
-                {
+//                    if (!__production)
+//                        console.log('成功' + coin1 + '_' + coin2);
+//                    if (!__production)
+//                        console.log('剩余 ：' + marketRequestCount);
 
-                    var market = new MarketHistory();
-                    market.set('last',parseFloat(resultInfo.last));
-                    market.set('high',parseFloat(resultInfo.high));
-                    market.set('low',parseFloat(resultInfo.low));
-                    market.set('avg',parseFloat(resultInfo.avg));
-                    market.set('sell',parseFloat(resultInfo.sell));
-                    market.set('buy',parseFloat(resultInfo.buy));
-                    market.set('avg',parseFloat(resultInfo.avg));
-                    market.set('vol1',parseFloat(resultInfo['vol_'+coin1]));
-                    market.set('vol2',parseFloat(resultInfo['vol_'+coin2]));
-                    market.set('coin1',coin1);
-                    market.set('coin2',coin2);
-                    marketDataList.push(market);
+                    //保存数据
+                    if (resultInfo.result)
+                    {
+                        var market = new MarketHistory();
+                        market.set('last',parseFloat(resultInfo.last));
+                        market.set('high',parseFloat(resultInfo.high));
+                        market.set('low',parseFloat(resultInfo.low));
+                        market.set('avg',parseFloat(resultInfo.avg));
+                        market.set('sell',parseFloat(resultInfo.sell));
+                        market.set('buy',parseFloat(resultInfo.buy));
+                        market.set('avg',parseFloat(resultInfo.avg));
+                        market.set('vol1',parseFloat(resultInfo['vol_'+coin1]));
+                        market.set('vol2',parseFloat(resultInfo['vol_'+coin2]));
+                        market.set('coin1',coin1);
+                        market.set('coin2',coin2);
+                        marketDataList.push(market);
+                    }
+
+                } catch(e) {
+
+//                    if (!__production)
+//                        console.log('失败'+ coin1 + '_' + coin2);
+//                    if (!__production)
+//                        console.log('剩余 ：' + marketRequestCount);
+                    if (!__production)
+                    {
+                        console.log('请求过于频繁');
+                        console.dir(e);
+                        console.dir(httpResponse.text)
+                    }
                 }
-            }
+//            }
 
             if (marketRequestCount == 0)
             {
@@ -436,14 +484,101 @@ var marketHistoryRequest = function(coin1,coin2){
 
             --marketRequestCount;
 
-            if (!__production)
-                console.log('失败'+ coin1 + '_' + coin2);
-            if (!__production)
-                console.log('剩余 ：' + marketRequestCount);
+//            if (!__production)
+//                console.log('失败'+ coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + marketRequestCount);
 
             if (marketRequestCount == 0)
             {
                 saveAllMarket();
+            }
+        }
+    });
+}
+
+var depthHistoryRequest = function(coin1,coin2){
+
+    var url = 'http://cn.bter.com/api/1/depth/'+coin1+'_'+coin2;
+
+//    if (!__production)
+//        console.log(url);
+
+    AV.Cloud.httpRequest({
+        url: url,
+//            secureProtocol : 'SSLv1_method',
+        success: function(httpResponse) {
+
+//            console.log(httpResponse.text);
+            --depthRequestCount;
+
+            var resultInfo ;
+            try {
+                resultInfo = JSON.parse(httpResponse.text);
+
+//                if (!__production)
+//                    console.log('成功' + coin1 + '_' + coin2);
+//                if (!__production)
+//                    console.log('剩余 ：' + depthRequestCount);
+
+                //保存数据
+                if (resultInfo.result)
+                {
+                    var depthAskComissionList = new Array();
+                    var depthAskPriceList = new Array();
+                    var depthBidComissionList = new Array();
+                    var depthBidPriceList = new Array();
+
+                    for (var i=0;i<resultInfo.asks.length;i++)
+                    {
+                        var ask = resultInfo.asks[i];
+                        depthAskComissionList.push(parseFloat(ask[0]));
+                        depthAskPriceList.push(parseFloat(ask[1]));
+                    }
+                    for (var i=0;i<resultInfo.bids.length;i++)
+                    {
+                        var bid = resultInfo.bids[i];
+                        depthBidComissionList.push(parseFloat(bid[0]));
+                        depthBidPriceList.push(parseFloat(bid[1]));
+                    }
+                    var depth = new DepthHistory();
+                    depth.set('askCommission',depthAskComissionList);
+                    depth.set('askPrice',depthAskPriceList);
+                    depth.set('bidCommission',depthBidComissionList);
+                    depth.set('bidPrice',depthBidPriceList);
+                    depth.set('coin1',coin1);
+                    depth.set('coin2',coin2);
+                    depthDataList.push(depth);
+                }
+
+            } catch(e) {
+                if (!__production)
+                {
+                    console.log('请求过于频繁');
+                    console.dir(e);
+                    console.dir(httpResponse.text)
+                }
+
+            }
+
+            if (depthRequestCount == 0)
+            {
+                saveAllDepth();
+            }
+
+        },
+        error: function(httpResponse) {
+
+            --depthRequestCount;
+
+//            if (!__production)
+//                console.log('失败'+ coin1 + '_' + coin2);
+//            if (!__production)
+//                console.log('剩余 ：' + depthRequestCount);
+
+            if (depthRequestCount == 0)
+            {
+                saveAllDepth();
             }
         }
     });
@@ -500,6 +635,31 @@ var saveAllMarket = function(){
     });
 }
 
+var saveAllDepth = function(){
+
+    if (!__production)
+        console.log('depthHistroy' + ' : ' + 'save数组 ： ' + depthDataList.length);
+
+    AV.Object.saveAll(depthDataList,function(completeList,error){
+
+        if (completeList)
+        {
+            console.log('depthHistroy' + ' : ' + depthDataList.length+' object is created ');
+        }
+        else
+        {
+            console.error('depthHistroy' + ' : ' + depthDataList.length+' is failed to create with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+        }
+
+        depthDataList.splice(0);
+//        tradeIsSaveDone = 1;
+
+        setIsRunning('depth',false);
+
+        console.log('depthHistroy Done ');
+
+    });
+}
 //var saveAllObject = function(list,className){
 //
 //    if (!__production)
