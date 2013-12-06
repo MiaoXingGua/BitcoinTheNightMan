@@ -158,7 +158,7 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
         var requests = {}
         for (var i=0;i<coin1List.length;i++){
 			var coin = coin1List[i];
-			requests.coin = coin;
+			requests[coin] = coin;
         }
         for (var i=0;i<coin1List.length;i++){
 			var coin = coin1List[i];
@@ -180,7 +180,7 @@ var alertRequest = function(requests, coin1,coin2){
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
-			if(!requests.coin1)
+			if(!requests[coin1])
 				return;
 			delete requests[coin1];
 
@@ -192,7 +192,7 @@ var alertRequest = function(requests, coin1,coin2){
             }
         },
         error: function(httpResponse) {
-			if(!requests.coin1)
+			if(!requests[coin1])
 				return;
 			delete requests[coin1];
 
