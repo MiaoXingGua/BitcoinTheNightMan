@@ -13,6 +13,12 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
+var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','src','tag','tix','wdc','xpm','yac','zcc'];
+
+//jry bsc trc
+
+var coin2List = ['cny'];
+
 if (__production){
 
 AV.Cloud.define("hello", function(request, response) {
@@ -55,7 +61,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                 return;
             delete requests[coin1];
 
-//                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
+                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
 
             if (isEmpty(requests))
             {
@@ -73,7 +79,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                 return;
             delete requests[coin1];
 
-//                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
 
             if (isEmpty(requests))
             {
@@ -122,11 +128,7 @@ var alertPush = function(){
 
 if (!__production && 0){
 
-    var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','src','tag','tix','wdc','xpm','yac','zcc'];
 
-//jry bsc trc
-
-    var coin2List = ['cny'];
 
     var tradeRequestCount = 0;
     var marketRequestCount = 0;
