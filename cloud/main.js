@@ -12,7 +12,7 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -156,6 +156,7 @@ AV.Cloud.define("reset_running", function(request, response) {
 
 AV.Cloud.setInterval('coin_request', 5, function(){
 
+    console.log('coin_request');
     //历史成交记录 API
 //    getIsRunning('trade',function(isRunning){
 //
