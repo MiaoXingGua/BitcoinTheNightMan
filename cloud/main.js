@@ -167,9 +167,9 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
                   if (isRunning)
                   {
                     alertRequestCount = 0;
-                    for (var i=0;i<10;i++)
+                    for (var i=0;i<coin1List.length;i++)
                     {
-                        alertRequest();
+                        alertRequest(coin1List[i],'cny');
                     }
                   }
             });
@@ -177,10 +177,10 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
     });
 });
 
-var alertRequest = function(){
+var alertRequest = function(coin1,coin2){
 
     ++alertRequestCount;
-    var url = 'http://www.baidu.com/';
+    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
