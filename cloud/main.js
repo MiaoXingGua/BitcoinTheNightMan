@@ -47,8 +47,11 @@ var getIsRunning = function(type,block){
 
             if (object)
             {
-                var isRunning = object.get('isRunning');
-                block(isRunning);
+                if (typeof(block) == 'function')
+                {
+                    var isRunning = object.get('isRunning');
+                    block(isRunning);
+                }
             }
             else
             {
@@ -61,7 +64,8 @@ var getIsRunning = function(type,block){
     });
 }
 
-var setIsRunning = function(type,run){
+var setIsRunning = function(type,run,block){
+
 
     var query = new AV.Query(RequestController);
     query.equalTo('type',type);
@@ -70,9 +74,47 @@ var setIsRunning = function(type,run){
 
             if (object)
             {
-                object.set('isRunning',run);
-                if (run) object.increment('runCount');
-                object.save();
+
+                    object.set('isRunning',run);
+                    if (run) object.increment('runCount');
+                    if (run) console.log('set running : true');
+                    if (!run) console.log('set running : false');
+//                try {
+                    object.save(null, {
+
+                        success: function(object) {
+
+                            var isRunning = object.get('isRunning');
+                            if (isRunning == run)
+                            {
+                                console.log('set running success');
+                                if (typeof(block) == 'function' )
+                                {
+                                    block(isRunning);
+                                }
+                            }
+                            else
+                            {
+                                console.log('set running is failed');
+                                setIsRunning(type,run,block);
+                            }
+
+                        },
+                        error: function(object, error) {
+
+                            console.error('set running is failed with error code: '+ error.code + " error message:" + error.message + " error description:"+ error.description);
+                        }
+                    });
+//                }
+//                catch (e)
+//                {
+//                    if (!__production)
+//                    {
+//                        console.dir(e);
+//                        console.dir(httpResponse.text)
+//                    }
+//                }
+
             }
             else
             {
@@ -86,9 +128,9 @@ var setIsRunning = function(type,run){
 }
 
 AV.Cloud.define("reset_running", function(request, response) {
-    setIsRunning('trade',false);
-    setIsRunning('market',false);
-    setIsRunning('depth',false);
+    setIsRunning('trade',false,null);
+    setIsRunning('market',false,null);
+    setIsRunning('depth',false,null);
     console.log("reset_running");
 });
 
@@ -161,23 +203,26 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
         if (!isRunning)
         {
-            marketDataList = new Array();
-            marketRequestCount = 0;
+            setIsRunning('market',true,function(isRunning){
 
-            setIsRunning('market',true);
+                if (isRunning)
+                {
+                    marketDataList = new Array();
+                    marketRequestCount = 0;
 
-            console.log('marketHistroy Start');
+                    console.log('marketHistroy Start');
 
 //            if (!__production)
 //                console.log('marketCount : ' + marketCount++);
 
-
-            for (var i=0;i<coin1List.length;i++)
-            {
+                    for (var i=0;i<coin1List.length;i++)
+                    {
 //            if (!__production)
 //                console.log('创建请求 : '+marketRequestCount);
-                marketHistory(coin1List[i],'cny');
-            }
+                        marketHistory(coin1List[i],'cny');
+                    }
+                }
+            });
         }
         else
         {
@@ -434,7 +479,7 @@ var marketHistoryRequest = function(coin1,coin2){
                     resultInfo = JSON.parse(httpResponse.text);
 
 //                    if (!__production)
-//                        console.log('成功' + coin1 + '_' + coin2);
+                        console.log('成功' + coin1 + '_' + coin2);
 //                    if (!__production)
                         console.log('剩余 ：' + marketRequestCount);
 
@@ -459,7 +504,7 @@ var marketHistoryRequest = function(coin1,coin2){
                 } catch(e) {
 
 //                    if (!__production)
-//                        console.log('失败'+ coin1 + '_' + coin2);
+                        console.log('失败'+ coin1 + '_' + coin2);
 //                    if (!__production)
                         console.log('剩余 ：' + marketRequestCount);
                     if (!__production)
@@ -482,7 +527,7 @@ var marketHistoryRequest = function(coin1,coin2){
             --marketRequestCount;
 
 //            if (!__production)
-//                console.log('失败'+ coin1 + '_' + coin2);
+                console.log('失败'+ coin1 + '_' + coin2);
 //            if (!__production)
                 console.log('剩余 ：' + marketRequestCount);
 
@@ -626,8 +671,14 @@ var saveAllMarket = function(){
 
         marketDataList.splice(0);
 //        marketIsSaveDone = 1;
-        setIsRunning('market',false);
-        console.log('marketHistroy Done ');
+        setIsRunning('market',false,function(isRunning){
+
+            if (!isRunning)
+                console.log('marketHistroy Done ');
+            else
+                console.log('marketHistroy Not Done !!!!!!!!');
+
+        });
 
     });
 }
