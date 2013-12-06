@@ -19,8 +19,8 @@ AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
 });
 
-AV.Cloud.setInterval('coin_alert', 5, function(done){
-    lock.sync('coin_alert', 15000, function(){
+AV.Cloud.setInterval('coin_alert', 5, function(){
+    lock.sync('coin_alert', 15000, function(done){
         var requests = {}
         for (var i=0;i<coin1List.length;i++)
         {
@@ -30,7 +30,7 @@ AV.Cloud.setInterval('coin_alert', 5, function(done){
 //        for (var i=0;i<coin1List.length;i++)
 //        {
 //            var coin = coin1List[i];
-            alertRequest(requests, coin, 'cny');
+            alertRequest(requests, coin, 'cny', done);
         }
     });
 });
