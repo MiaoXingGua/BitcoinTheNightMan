@@ -75,8 +75,8 @@ var setIsRunning = function(type,run,block){
             {
                 object.set('isRunning',run);
                 if (run) object.increment('runCount');
-                if (run) console.log('set running : true');
-                if (!run) console.log('set running : false');
+//                if (run) console.log('set running : true');
+//                if (!run) console.log('set running : false');
 
                 object.save(null, {
 
