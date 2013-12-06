@@ -467,10 +467,10 @@ var marketHistoryRequest = function(coin1,coin2){
                 try {
                     resultInfo = JSON.parse(httpResponse.text);
 
-//                    if (!__production)
-//                        console.log('成功' + coin1 + '_' + coin2);
-//                    if (!__production)
-//                        console.log('剩余 ：' + marketRequestCount);
+                    if (!__production)
+                        console.log('成功' + coin1 + '_' + coin2);
+                    if (!__production)
+                        console.log('剩余 ：' + marketRequestCount);
 
                     //保存数据
                     if (resultInfo.result)
@@ -492,10 +492,11 @@ var marketHistoryRequest = function(coin1,coin2){
 
                 } catch(e) {
 
-//                    if (!__production)
-//                        console.log('失败'+ coin1 + '_' + coin2);
-//                    if (!__production)
-//                        console.log('剩余 ：' + marketRequestCount);
+                    if (!__production)
+                        console.log('失败'+ coin1 + '_' + coin2);
+                    if (!__production)
+                        console.log('剩余 ：' + marketRequestCount);
+
                     if (!__production)
                     {
                         console.log('请求过于频繁');
@@ -515,10 +516,10 @@ var marketHistoryRequest = function(coin1,coin2){
 
             --marketRequestCount;
 
-//            if (!__production)
-//                console.log('失败'+ coin1 + '_' + coin2);
-//            if (!__production)
-//                console.log('剩余 ：' + marketRequestCount);
+            if (!__production)
+                console.log('失败'+ coin1 + '_' + coin2);
+            if (!__production)
+                console.log('剩余 ：' + marketRequestCount);
 
             if (marketRequestCount <= 0)
             {
@@ -622,17 +623,21 @@ var isArray = function (obj) {
     //return obj && !(obj.propertyIsEnumerable('length')) && typeof obj === 'object' && typeof obj.length === 'number';
     if (obj instanceof Array)
     {
-        if (obj.lenght)
+        console.log('是数组');
+        if (obj.length)
         {
+//            console.log('长度不为0');
             return true;
         }
         else
         {
+//            console.log('长度为0');
             return false;
         }
     }
     else
     {
+//        console.log('不是数组');
         return false;
     }
 };
