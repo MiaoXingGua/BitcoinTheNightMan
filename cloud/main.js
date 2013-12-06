@@ -154,7 +154,7 @@ AV.Cloud.define("reset_running", function(request, response) {
 
 //} );
 
-var alertRequestCount;
+var alertRequestCount=0;
 
 AV.Cloud.setInterval('coin_alert', 5, function(){
 
@@ -906,11 +906,6 @@ var saveAllMarket = function(){
 
         });
     }
-
-
-
-
-
 }
 
 var saveAllDepth = function(){
