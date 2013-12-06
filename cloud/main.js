@@ -13,18 +13,11 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-<<<<<<< HEAD
 if (!__production){
 
     AV.Cloud.define("hello", function(request, response) {
         response.success("Hello world!");
     });
-=======
-if (__production){
-AV.Cloud.define("hello", function(request, response) {
-    response.success("Hello world!");
-});
->>>>>>> 873366063b8048f3387d8f01b9b737b34ea74943
 
 
     var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','src','tag','tix','wdc','xpm','yac','zcc'];
@@ -161,7 +154,6 @@ AV.Cloud.define("hello", function(request, response) {
 
 //} );
 
-<<<<<<< HEAD
 AV.Cloud.setInterval('coin_alert', 5, function()
 {
     lock.sync('coin_alert', 15000, function()
@@ -171,17 +163,6 @@ AV.Cloud.setInterval('coin_alert', 5, function()
         {
             var coin = coin1List[i];
             requests[coin] = coin;
-=======
-AV.Cloud.setInterval('coin_alert', 5, function(){
-    lock.sync('coin_alert', 15000, function(){
-        var requests = {}
-        for (var i=0;i<coin1List.length;i++){
-			var coin = coin1List[i];
-			requests[coin] = coin;
-        }
-        for (var i=0;i<coin1List.length;i++){
-			var coin = coin1List[i];
->>>>>>> 873366063b8048f3387d8f01b9b737b34ea74943
             alertRequest(requests, coin, 'cny');
         }
 //        for (var i=0;i<coin1List.length;i++)
@@ -192,7 +173,6 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
     });
 });
 
-<<<<<<< HEAD
 function isEmpty(obj)
 {
     return Object.keys(obj).length === 0;
@@ -203,26 +183,12 @@ function length(obj)
     return Object.keys(obj).length;
 }
 
-=======
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-}
-
-function length(obj){
-	return Object.keys(obj).length;
-}
-
->>>>>>> 873366063b8048f3387d8f01b9b737b34ea74943
 var alertRequest = function(requests, coin1,coin2){
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
-			if(!requests[coin1])
-				return;
-			delete requests[coin1];
 
-<<<<<<< HEAD
             if(!requests[coin1])   return;
 
             delete requests[coin1];
@@ -244,23 +210,6 @@ var alertRequest = function(requests, coin1,coin2){
             if (isEmpty(requests))
             {
                 console.log('done in error');
-=======
-            console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
-
-            if (isEmpty(requests))
-            {
-				console.log('done in success');
-            }
-        },
-        error: function(httpResponse) {
-			if(!requests[coin1])
-				return;
-			delete requests[coin1];
-
-            console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
-			if (isEmpty(requests)){
-				console.log('done in error');
->>>>>>> 873366063b8048f3387d8f01b9b737b34ea74943
             }
         }
     });
