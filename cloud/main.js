@@ -125,7 +125,7 @@ AV.Cloud.define("reset_running", function(request, response) {
 //AV.Cloud.setInterval('clean_runCount', 10*60, function(){
 //
 //    console.log('clean_runCount');
-//
+
 //    var query = new AV.Query(RequestController);
 //    query.find({
 //        success: function(objects) {
@@ -151,12 +151,157 @@ AV.Cloud.define("reset_running", function(request, response) {
 //            console.error("Error: " + error.code + " " + error.message);
 //        }
 //    });
-//
+
 //} );
 
-AV.Cloud.setInterval('coin_request', 5, function(){
+var alertRequestCount;
 
-    console.log('coin_request');
+AV.Cloud.setInterval('coin_alert', 5, function(){
+
+    getIsRunning('alert',function(isRunning){
+
+        if (!isRunning)
+        {
+            setIsRunning('alert',true,function(isRunning){
+
+                  if (isRunning)
+                  {
+                    alertRequestCount = 0;
+                    for (var i=0;i<coin1List.length;i++)
+                    {
+                        alertRequest(coin1List[i],'cny');
+                    }
+                  }
+            });
+        }
+    });
+});
+
+var alertRequest = function(coin1,coin2){
+
+    ++alertRequestCount;
+    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+    AV.Cloud.httpRequest({
+        url: url,
+//            secureProtocol : 'SSLv1_method',
+        success: function(httpResponse) {
+
+//            console.log(httpResponse.text);
+            --alertRequestCount;
+
+//            if (!__production)
+//                console.log('成功' + coin1 + '_' + coin2);
+//            if (!__production)
+                console.log('剩余 ：' + alertRequestCount);
+
+            var resultInfo ;
+            try {
+                resultInfo = JSON.parse(httpResponse.text);
+
+                //推送
+                if (resultInfo.result && 0)
+                {
+                    var resultDataList = resultInfo.data;
+                    resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
+
+                    var lastPrice = resultDataList[0].price;
+                    console.log('lastPrice : ' + lastPrice);
+
+                    var coinQuery = new AV.Query(Coin);
+                    coinQuery.equalTo('coin1', coin1);
+                    coinQuery.equalTo('coin2', coin2);
+
+                    var maxQuery = new AV.Query(UserFavicon);
+                    maxQuery.matchesQuery('coin', coinQuery);
+                    maxQuery.equalTo('isPush', true);
+                    maxQuery.exists('maxValue');
+                    maxQuery.notEqualTo('maxValue', 0);
+                    maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
+
+                    var minQuery = new AV.Query(UserFavicon);
+                    minQuery.matchesQuery('coin', coinQuery);
+                    minQuery.equalTo('isPush', true);
+                    minQuery.exists('minValue');
+                    minQuery.notEqualTo('minValue', 0);
+                    minQuery.greaterThanOrEqualTo("minValue", lastPrice);
+
+                    var mainQuery = AV.Query.or(maxQuery, minQuery);
+                    mainQuery.find({
+                        success: function(results) {
+
+                            console.log('2 : '+results.length);
+//                              var userList = new Array();
+                            for (var userFav in results)
+                            {
+                                var user = results.get('user');
+                                var userId = AV.Object.createWithoutData("_User", user.id);
+                                var installationQuery = new AV.Query(Installation);
+                                installationQuery.equalTo('user', userId);
+
+                                AV.Push.send({
+//                                    channels: [ "Public" ],
+                                    where: installationQuery,
+                                    data: {
+                                        alert: "哈哈哈"
+                                    }
+                                });
+                            }
+                            // results contains a list of players that either have won a lot of games or won only a few games.
+                        },
+                        error: function(error) {
+                            // There was an error.
+                        }
+                    });
+                }
+
+            } catch(e) {
+                if (!__production)
+                {
+                    console.log('请求过于频繁');
+                    console.dir(e);
+                    console.dir(httpResponse.text)
+                }
+            }
+
+            if (alertRequestCount == 0)
+            {
+                setIsRunning('alert',false,function(isRunning){
+
+                    if (!isRunning)
+                        console.log('alerty Done ');
+                    else
+                        console.log('alert Not Done !!!!!!!!');
+
+                });
+            }
+        },
+        error: function(httpResponse) {
+
+            --alertRequestCount;
+
+//            if (!__production)
+//                console.log('失败'+ coin1 + '_' + coin2);
+//            if (!__production)
+                console.log('剩余 ：' + alertRequestCount);
+
+            if (alertRequestCount == 0)
+            {
+                setIsRunning('alert',false,function(isRunning){
+
+                    if (!isRunning)
+                        console.log('alerty Done ');
+                    else
+                        console.log('alert Not Done !!!!!!!!');
+
+                });
+            }
+        }
+    });
+}
+
+//AV.Cloud.setInterval('coin_request', 5, function(){
+
+//    console.log('coin_request');
     //历史成交记录 API
 //    getIsRunning('trade',function(isRunning){
 //
@@ -188,37 +333,37 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 //    });
 
     //交易行情 API
-    getIsRunning('market',function(isRunning){
-
-        if (!isRunning)
-        {
-            setIsRunning('market',true,function(isRunning){
-
-                if (isRunning)
-                {
-                    marketDataList = new Array();
-//                    marketRequestCount = 0;
-
-                    console.log('marketHistroy Start');
-
-//            if (!__production)
-//                console.log('marketCount : ' + marketCount++);
-
-                    for (var i=0;i<coin1List.length;i++)
-                    {
-//            if (!__production)
-//                console.log('创建请求 : '+marketRequestCount);
-                        marketHistory(coin1List[i],'cny');
-                    }
-                }
-            });
-        }
-        else
-        {
-//        if (!__production)
-//            console.log('还有有请求没有返回---return');
-        }
-    });
+//    getIsRunning('market',function(isRunning){
+//
+//        if (!isRunning)
+//        {
+//            setIsRunning('market',true,function(isRunning){
+//
+//                if (isRunning)
+//                {
+//                    marketDataList = new Array();
+////                    marketRequestCount = 0;
+//
+//                    console.log('marketHistroy Start');
+//
+////            if (!__production)
+////                console.log('marketCount : ' + marketCount++);
+//
+//                    for (var i=0;i<coin1List.length;i++)
+//                    {
+////            if (!__production)
+////                console.log('创建请求 : '+marketRequestCount);
+//                        marketHistory(coin1List[i],'cny');
+//                    }
+//                }
+//            });
+//        }
+//        else
+//        {
+////        if (!__production)
+////            console.log('还有有请求没有返回---return');
+//        }
+//    });
 
     //市场深度 API
 //    getIsRunning('depth',function(isRunning){
@@ -250,7 +395,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 //        }
 //    });
 
-});
+//});
 
 var tradeHistory = function(coin1,coin2){
 
