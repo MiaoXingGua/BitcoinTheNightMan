@@ -3,6 +3,7 @@
 
 
 //var Market = AV.Object.extend("Market");
+var lock = require('avos-lock');
 var User = AV.Object.extend('_User');
 var UserFavicon = AV.Object.extend('UserFavicon');
 var Installation = AV.Object.extend('_Installation');
@@ -12,9 +13,7 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (__production)
-{
-
+if (__production){
 AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
 });
@@ -154,70 +153,51 @@ AV.Cloud.define("reset_running", function(request, response) {
 
 //} );
 
-var alertRequestCount=0;
-
 AV.Cloud.setInterval('coin_alert', 5, function(){
-
-    getIsRunning('alert',function(isRunning){
-
-        if (!isRunning)
-        {
-            setIsRunning('alert',true,function(isRunning){
-
-                  if (isRunning)
-                  {
-//                    alertRequestCount = 0;
-                    for (var i=0;i<coin1List.length;i++)
-                    {
-                        alertRequest(coin1List[i],'cny');
-                    }
-                  }
-            });
+    lock.sync('coin_alert', 15000, function(){
+        var requests = {}
+        for (var i=0;i<coin1List.length;i++){
+			var coin = coin1List[i];
+            alertRequest(requests, coin, 'cny');
         }
     });
 });
 
-var alertRequest = function(coin1,coin2){
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
 
-    ++alertRequestCount;
+function length(obj){
+	return Object.keys(obj).length;
+}
+
+var alertRequest = function(requests, coin1,coin2){
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+	//remeber the request url.
+	requests.coin1 = url;
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
+			if(!requests.coin1)
+				return;
+			delete requests[coin1];
 
-            --alertRequestCount;
+            console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
 
-            console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' + alertRequestCount);
-
-            if (alertRequestCount == 0)
+            if (isEmpty(requests)){
             {
-                setIsRunning('alert',false,function(isRunning){
-
-                    if (!isRunning)
-                        console.log('alerty Done ');
-                    else
-                        console.log('alert Not Done !!!!!!!!');
-
-                });
+				console.log('done in success');
             }
         },
         error: function(httpResponse) {
+			if(!requests.coin1)
+				return;
+			delete requests[coin1];
 
-            --alertRequestCount;
-
-            console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + alertRequestCount);
-
-
-            if (alertRequestCount == 0)
+            console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+			if (isEmpty(requests)){
             {
-                setIsRunning('alert',false,function(isRunning){
-
-                    if (!isRunning)
-                        console.log('alerty Done ');
-                    else
-                        console.log('alert Not Done !!!!!!!!');
-
-                });
+				console.log('done in error');
             }
         }
     });
