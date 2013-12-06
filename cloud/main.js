@@ -616,6 +616,26 @@ var depthHistoryRequest = function(coin1,coin2){
 }
 
 
+//判断是否是数组的函数
+var isArray = function (obj) {
+    //return obj && !(obj.propertyIsEnumerable('length')) && typeof obj === 'object' && typeof obj.length === 'number';
+    if (obj instanceof Array)
+    {
+        if (obj.lenght)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+};
+
 var saveAllTrade = function(){
 
     if (!__production)
@@ -647,8 +667,7 @@ var saveAllMarket = function(){
     if (!__production)
         console.log('marketHistroy' + ' : ' + 'save数组 ： ' + marketDataList.length);
 
-
-    if (marketDataList.length>0 && typeof(marketDataList)=='object')
+    if (isArray(marketDataList))
     {
         var dataList = marketDataList.slice(0);
         marketDataList.splice(0);
