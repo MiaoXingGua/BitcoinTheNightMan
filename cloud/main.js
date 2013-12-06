@@ -12,7 +12,7 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-if (__production)
+if (!__production)
 {
 
 AV.Cloud.define("hello", function(request, response) {
@@ -135,7 +135,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
         if (tradeRequestCount == 0 && !isRunning)
         {
-            tradeDataList.splice(0);
+            tradeDataList = new Array();
 //            marketIsSaveDone = 0;
 
             setIsRunning('trade',true);
@@ -165,7 +165,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
         if (!isRunning)
         {
-            marketDataList.splice(0);
+            marketDataList = new Array();
 //            marketIsSaveDone = 0;
 
             setIsRunning('market',true);
@@ -195,7 +195,7 @@ AV.Cloud.setInterval('coin_request', 5, function(){
 
         if (!isRunning)
         {
-            depthDataList.splice(0);
+            depthDataList = new Array();
 //            marketIsSaveDone = 0;
 
             setIsRunning('depth',true);
@@ -306,7 +306,7 @@ var tradeHistoryRequest = function(coin1,coin2,lastTid){
                     resultDataList.sort(function(data1,data2){return parseInt(data1.tid) <parseInt(data2.tid)?1:-1});
 
                     var count = resultDataList.length;
-                    if (count > 100)  count=100;
+                    if (count > 80)  count=80;
 
                     for (var i=resultInfo.data.length-1;i>=resultDataList.length-count;i--)
                     {
