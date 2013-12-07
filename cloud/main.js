@@ -45,13 +45,13 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
         }
 
         //测试
-        var count = 0;
-        for (var i in requests)
-        {
-            count++;
-        }
-        if (!__production)
-            console.log('开始 : '+count);
+//        var count = 0;
+//        for (var i in requests)
+//        {
+//            count++;
+//        }
+//        if (!__production)
+//            console.log('开始 : '+count);
 
 
         for (var i=0;i<coin1List.length;i++)
@@ -210,7 +210,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             minQuery.matchesQuery('coin', coinQuery);
             minQuery.equalTo('isPush', true);
             minQuery.exists('minValue');
-            minQuery.notEqualTo('minValue', 0);
+            minQuery.greaterThan('minValue', 0);
             minQuery.greaterThanOrEqualTo("minValue", lowPrice);
             minQuery.include('user');
             minQuery.include('coin');
@@ -274,7 +274,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             maxQuery.matchesQuery('coin', coinQuery);
             maxQuery.equalTo('isPush', true);
             maxQuery.exists('maxValue');
-            maxQuery.notEqualTo('maxValue', 0);
+            maxQuery.greaterThan('maxValue', 0);
             maxQuery.lessThanOrEqualTo('maxValue', highPrice);
             maxQuery.include('user');
             maxQuery.include('coin');
