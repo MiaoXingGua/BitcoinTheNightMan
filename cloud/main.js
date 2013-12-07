@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -131,8 +131,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
             if (isEmpty(requests))
             {
                 try{
-                    if (!__production)
-                        console.log('alert reuqest is done.');
+
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
                     alertPush(lowPriceDataList,highPriceDataList);
@@ -140,6 +139,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                 }finally{
 //                    lowPriceDataList = [];
 //                    highPriceDataList = [];
+                    console.log('alert reuqest is done.');
                     done();
                 }
 
@@ -155,8 +155,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
             if (isEmpty(requests))
             {
                 try{
-                    if (!__production)
-                        console.log('alert reuqest is done.');
+
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
 					alertPush(lowPriceDataList,highPriceDataList);
@@ -164,6 +163,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 				}finally{
 //                    lowPriceDataList = [];
 //                    highPriceDataList = [];
+                    console.log('alert reuqest is done.');
 					done();
 				}
             }
@@ -173,7 +173,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 
 function alertPush(lowPriceDataList,highPriceDataList){
 
-//    if (!__production)
+    if (!__production)
         console.log('完成 1: '+ lowPriceDataList.length);
 
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
