@@ -31,35 +31,34 @@ AV.Cloud.define("hello", function(request, response) {
 
 AV.Cloud.setInterval('coin_alert', 5, function(){
 
-    lock.sync('coin_alert', 15000, function(done){
+    lock.sync('coin_alert', 20000, function(done){
 
         console.log('start');
-//        var requests = {};
-//        var lowPriceDataList = [];
-//        var highPriceDataList = [];
-//
-//
-//        for (var i=0;i<coin1List.length;i++)
-//        {
-//            var coin = coin1List[i];
-//            requests[coin] = coin;
-//        }
-//
-//        //测试
-//        var count = 0;
-//        for (var i in requests)
-//        {
-//            count++;
-//        }
-//        if (!__production)
-//            console.log('开始 : '+count);
-//
-//
-//        for (var i=0;i<coin1List.length;i++)
-//        {
-//            var coin = coin1List[i];
-////            alertRequest(requests, lowPriceDataList, highPriceDataList, coin, 'cny', done);
-//        }
+        var requests = {};
+        var lowPriceDataList = [];
+        var highPriceDataList = [];
+
+        for (var i=0;i<coin1List.length;i++)
+        {
+            var coin = coin1List[i];
+            requests[coin] = coin;
+        }
+
+        //测试
+        var count = 0;
+        for (var i in requests)
+        {
+            count++;
+        }
+        if (!__production)
+            console.log('开始 : '+count);
+
+
+        for (var i=0;i<coin1List.length;i++)
+        {
+            var coin = coin1List[i];
+            alertRequest(requests, lowPriceDataList, highPriceDataList, coin, 'cny', done);
+        }
     });
 });
 
