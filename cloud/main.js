@@ -271,6 +271,8 @@ function alertPush(lowPriceDataList,highPriceDataList){
             maxQuery.find({
                 success: function(results) {
 
+                    console.log('？？？？？？？ : '+results.length);
+
                     if (isArray(results))
                     {
                         console.log('最高价--需要提醒的人数 : '+results.length);
