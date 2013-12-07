@@ -198,6 +198,7 @@ function alertPush(){
             minQuery.notEqualTo('minValue', 0);
             minQuery.greaterThanOrEqualTo("minValue", lowPrice);
             minQuery.include('user');
+            minQuery.include('coin');
 
             minQuery.find({
                 success: function(results) {
@@ -211,6 +212,8 @@ function alertPush(){
                         for (var i=0;i<results.length;++i)
                         {
                             var userFavicon = results[i];
+                            var coin = userFavicon.get('coin');
+                            var coin1 = coin.get('coin1');
                             var user = userFavicon.get('user');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
@@ -252,6 +255,7 @@ function alertPush(){
             maxQuery.notEqualTo('maxValue', 0);
             maxQuery.lessThanOrEqualTo('maxValue', highPrice);
             maxQuery.include('user');
+            maxQuery.include('coin');
 
             maxQuery.find({
                 success: function(results) {
@@ -265,6 +269,8 @@ function alertPush(){
                             var userFavicon = results[i];
 //                            console.dir(userFavicon);
                             var user = userFavicon.get('user');
+                            var coin = userFavicon.get('coin');
+                            var coin1 = coin.get('coin1');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.equalTo('user', userId);
