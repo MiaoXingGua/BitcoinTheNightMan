@@ -22,7 +22,8 @@ var coin2List = ['cny'];
 
 if (!__production){
 
-var alertDataList = new Array();
+var lowPriceDataList = [];
+var highPriceDataList = [];
 
 AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
@@ -31,6 +32,11 @@ AV.Cloud.define("hello", function(request, response) {
 AV.Cloud.setInterval('coin_alert', 5, function(){
     lock.sync('coin_alert', 15000, function(done){
         var requests = {}
+
+        console.log('开始');
+//        var lowPriceDataList = [];
+//        var highPriceDataList = [];
+
         for (var i=0;i<coin1List.length;i++)
         {
             var coin = coin1List[i];
@@ -60,10 +66,10 @@ function isArray(obj)
     //return obj && !(obj.propertyIsEnumerable('length')) && typeof obj === 'object' && typeof obj.length === 'number';
     if (obj instanceof Array)
     {
-        console.log('是数组');
+
         if (obj.length)
         {
-//            console.log('长度不为0');
+//            console.log('是长度不为0的数组');
             return true;
         }
         else
@@ -85,6 +91,7 @@ var alertRequest = function(requests, coin1,coin2, done)
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
+
             if(requests[coin1])
             {
                 var resultInfo;
@@ -95,56 +102,66 @@ var alertRequest = function(requests, coin1,coin2, done)
                     if (resultInfo.result)
                     {
                         var resultDataList = resultInfo.data;
-                        resultDataList.sort(function(data1,data2){return data1.tid<data2.tid?1:-1});
+                        resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?1:-1});
 
-                        var lastPrice = resultDataList[0].price;
-                        console.log('lastPrice : ' + lastPrice);
+//                        console.dir(resultDataList[0]);
+//                        console.dir(resultDataList[resultDataList.length-1]);
 
-                        alertDataList.push(lastPrice);
+                        var lowPrice = parseFloat(resultDataList[0].price);
+                        var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
+//
+                        lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
+                        highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
+
+//                        console.log('增加 : '+ lowPriceDataList.length);
+//                        console.log(highPriceDataList.length);
+
                     }
 
-                } catch(e) {
+                } catch(error) {
 
-                    console.log('请求过于频繁');
-                    console.dir(e);
-                    console.dir(httpResponse.text)
-
+                    console.dir(error);                                   ƒ
                 }
-            }
-            else
-            {
-                return;
-            }
-
-
-            delete requests[coin1];
 
 //                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
+                delete requests[coin1];
+            }
 
             if (isEmpty(requests))
             {
                 try{
-					alertPush();
-					console.log('done in success');
-				}finally{
-					done();
-				}
+
+                    console.log('alert reuqest is done.');
+//                    console.log('完成0 : '+ lowPriceDataList.length);
+
+                    alertPush();
+
+                }finally{
+                    lowPriceDataList = [];
+                    highPriceDataList = [];
+                    done();
+                }
 
             }
         },
         error: function(httpResponse) {
-            if(!requests[coin1])
-                return;
-            delete requests[coin1];
-
+            if(requests[coin1])
+            {
 //                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+                delete requests[coin1];
+            }
 
             if (isEmpty(requests))
             {
                 try{
+                    console.log('alert reuqest is done.');
+//                    console.log('完成0 : '+ lowPriceDataList.length);
+
 					alertPush();
-					console.log('done in error');
+
 				}finally{
+                    lowPriceDataList = [];
+                    highPriceDataList = [];
 					done();
 				}
             }
@@ -152,90 +169,122 @@ var alertRequest = function(requests, coin1,coin2, done)
     });
 }
 
-var alertPush = function(){
+function alertPush(){
 
-//    var query = new AV.Query(RequestController);
-//    query.equalTo('type','market');
-//    query.first({
-//        success: function(object) {
-//
-//            if (object)
-//            {
-//                object.increment('runCount');
-//                object.save(null, {
-//
-//                    success: function(object) {
-//
-//
-//                    },
-//                    error: function(object, error) {
-//
-//
-//                    }
-//                });
-//            }
-//        },
-//        error: function(error) {
-//
-//        }
-//    });
-//
-//}
-    if (isArray(alertDataList))
+    if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
-        for (var i=0;i<alertDataList.length;++i)
-        {
+        console.log('完成 : '+ lowPriceDataList.length);
+//        console.log(highPriceDataList.length);
 
-            var lastPrice = alertDataList[i];
+        //最低成交价 <= 预警最低价
+        for (var i=0;i<lowPriceDataList.length;++i)
+        {
+            //最低成交价
+            var lowPrice = lowPriceDataList[i].price;
+            var coin1 = lowPriceDataList[i].coin1;
+            var coin2 = lowPriceDataList[i].coin2;
 
             var coinQuery = new AV.Query(Coin);
             coinQuery.equalTo('coin1', coin1);
             coinQuery.equalTo('coin2', coin2);
 
-            var maxQuery = new AV.Query(UserFavicon);
-            maxQuery.matchesQuery('coin', coinQuery);
-            maxQuery.equalTo('isPush', true);
-            maxQuery.exists('maxValue');
-            maxQuery.notEqualTo('maxValue', 0);
-            maxQuery.lessThanOrEqualTo('maxValue', lastPrice);
-
+            //预警最低价
             var minQuery = new AV.Query(UserFavicon);
             minQuery.matchesQuery('coin', coinQuery);
             minQuery.equalTo('isPush', true);
             minQuery.exists('minValue');
             minQuery.notEqualTo('minValue', 0);
-            minQuery.greaterThanOrEqualTo("minValue", lastPrice);
+            minQuery.greaterThanOrEqualTo("minValue", lowPrice);
+            minQuery.include('user');
 
-            var mainQuery = AV.Query.or(maxQuery, minQuery);
-            mainQuery.find({
+            minQuery.find({
                 success: function(results) {
 
-                    console.log('2 : '+results.length);
-//                              var userList = new Array();
-                    for (var userFav in results)
+                    if (isArray(results))
                     {
-                        var user = results.get('user');
-                        var userId = AV.Object.createWithoutData("_User", user.id);
-                        var installationQuery = new AV.Query(Installation);
-                        installationQuery.equalTo('user', userId);
+                        console.log('最低价--需要提醒的人数 : '+results.length);
+//                        console.dir(results[0]);
+//                        console.dir(results[0].get('user'));
 
-                        AV.Push.send({
+                        for (var i=0;i<results.length;++i)
+                        {
+                            var userFavicon = results[i];
+                            var user = userFavicon.get('user');
+                            var userId = AV.Object.createWithoutData("_User", user.id);
+                            var installationQuery = new AV.Query(Installation);
+                            installationQuery.equalTo('user', userId);
+//
+                            AV.Push.send({
 //                                    channels: [ "Public" ],
-                            where: installationQuery,
-                            data: {
-                                alert: "哈哈哈"
-                            }
-                        });
+                                where: installationQuery,
+                                data: {
+                                    alert: coin1+"  低价警报 : 赶紧抄底"
+                                }
+                            });
+                        }
                     }
-                    // results contains a list of players that either have won a lot of games or won only a few games.
                 },
                 error: function(error) {
                     // There was an error.
                 }
             });
         }
-    }
 
+        //预警最高价 <=  最高成交价
+        for (var i=0;i<highPriceDataList.length;++i)
+        {
+            //最高成交价
+            var highPrice = highPriceDataList[i].price;
+            var coin1 = highPriceDataList[i].coin1;
+            var coin2 = highPriceDataList[i].coin2;
+
+            var coinQuery = new AV.Query(Coin);
+            coinQuery.equalTo('coin1', coin1);
+            coinQuery.equalTo('coin2', coin2);
+
+            //预警最高价
+            var maxQuery = new AV.Query(UserFavicon);
+            maxQuery.matchesQuery('coin', coinQuery);
+            maxQuery.equalTo('isPush', true);
+            maxQuery.exists('maxValue');
+            maxQuery.notEqualTo('maxValue', 0);
+            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
+            maxQuery.include('user');
+
+            maxQuery.find({
+                success: function(results) {
+
+                    if (isArray(results))
+                    {
+                        console.log('最高价--需要提醒的人数 : '+results.length);
+
+                        for (var i=0;i<results.length;++i)
+                        {
+                            var userFavicon = results[i];
+//                            console.dir(userFavicon);
+                            var user = userFavicon.get('user');
+                            var userId = AV.Object.createWithoutData("_User", user.id);
+                            var installationQuery = new AV.Query(Installation);
+                            installationQuery.equalTo('user', userId);
+
+                            AV.Push.send({
+//                                    channels: [ "Public" ],
+                                where: installationQuery,
+                                data: {
+                                    alert: coin1+"  高价警报 : 赶紧抛吧"
+                                }
+                            });
+                        }
+                    }
+                },
+                error: function(error) {
+                    // There was an error.
+                }
+            });
+        }
+
+
+    }
 }
 
 }
