@@ -22,8 +22,8 @@ var coin2List = ['cny'];
 
 if (__production){
 
-var lowPriceDataList = [];
-var highPriceDataList = [];
+//var lowPriceDataList = [];
+//var highPriceDataList = [];
 
 AV.Cloud.define("hello", function(request, response) {
     response.success("Hello world!");
@@ -32,10 +32,11 @@ AV.Cloud.define("hello", function(request, response) {
 AV.Cloud.setInterval('coin_alert', 5, function(){
     lock.sync('coin_alert', 15000, function(done){
         var requests = {}
+        var lowPriceDataList = [];
+        var highPriceDataList = [];
+
         if (!__production)
              console.log('开始');
-//        var lowPriceDataList = [];
-//        var highPriceDataList = [];
 
         for (var i=0;i<coin1List.length;i++)
         {
@@ -45,7 +46,7 @@ AV.Cloud.setInterval('coin_alert', 5, function(){
 //        for (var i=0;i<coin1List.length;i++)
 //        {
 //            var coin = coin1List[i];
-            alertRequest(requests, coin, 'cny', done);
+            alertRequest(requests, lowPriceDataList, highPriceDataList, coin, 'cny', done);
         }
     });
 });
@@ -85,7 +86,7 @@ function isArray(obj)
     }
 }
 
-var alertRequest = function(requests, coin1,coin2, done)
+function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2, done)
 {
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
     AV.Cloud.httpRequest({
@@ -134,7 +135,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                         console.log('alert reuqest is done.');
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
-                    alertPush();
+                    alertPush(lowPriceDataList,highPriceDataList);
 
                 }finally{
                     lowPriceDataList = [];
@@ -158,7 +159,7 @@ var alertRequest = function(requests, coin1,coin2, done)
                         console.log('alert reuqest is done.');
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
-					alertPush();
+					alertPush(lowPriceDataList,highPriceDataList);
 
 				}finally{
                     lowPriceDataList = [];
@@ -170,7 +171,7 @@ var alertRequest = function(requests, coin1,coin2, done)
     });
 }
 
-function alertPush(){
+function alertPush(lowPriceDataList,highPriceDataList){
 
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
