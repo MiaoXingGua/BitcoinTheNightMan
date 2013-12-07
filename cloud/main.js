@@ -30,24 +30,36 @@ AV.Cloud.define("hello", function(request, response) {
 });
 
 AV.Cloud.setInterval('coin_alert', 5, function(){
+
     lock.sync('coin_alert', 15000, function(done){
-        var requests = {};
-        var lowPriceDataList = [];
-        var highPriceDataList = [];
 
-        if (!__production)
-             console.log('开始');
-
-        for (var i=0;i<coin1List.length;i++)
-        {
-            var coin = coin1List[i];
-            requests[coin] = coin;
-//        }
+        console.log('start');
+//        var requests = {};
+//        var lowPriceDataList = [];
+//        var highPriceDataList = [];
+//
+//
 //        for (var i=0;i<coin1List.length;i++)
 //        {
 //            var coin = coin1List[i];
-            alertRequest(requests, lowPriceDataList, highPriceDataList, coin, 'cny', done);
-        }
+//            requests[coin] = coin;
+//        }
+//
+//        //测试
+//        var count = 0;
+//        for (var i in requests)
+//        {
+//            count++;
+//        }
+//        if (!__production)
+//            console.log('开始 : '+count);
+//
+//
+//        for (var i=0;i<coin1List.length;i++)
+//        {
+//            var coin = coin1List[i];
+////            alertRequest(requests, lowPriceDataList, highPriceDataList, coin, 'cny', done);
+//        }
     });
 });
 
@@ -209,7 +221,8 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
 //                    if (isArray(results))
 //                    {
-                        console.log('最低价--需要提醒的人数 : '+results.length);
+//                        console.log('最低价--需要提醒的人数 : '+results.length);
+
 //                        console.dir(results[0]);
 //                        console.dir(results[0].get('user'));
 
@@ -274,7 +287,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
 //                    if (isArray(results))
 //                    {
-                        console.log('最高价--需要提醒的人数 : '+results.length);
+//                        console.log('最高价--需要提醒的人数 : '+results.length);
 
                         for (var i=0;i<results.length;++i)
                         {
