@@ -113,8 +113,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 //
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
-
-                        console.log('增加 : '+ lowPriceDataList.length);
+                        if (!__production)
+                             console.log('增加 : '+ lowPriceDataList.length);
 //                        console.log(highPriceDataList.length);
 
                     }
@@ -173,12 +173,12 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 
 function alertPush(lowPriceDataList,highPriceDataList){
 
-    if (!__production)
+//    if (!__production)
         console.log('完成 1: '+ lowPriceDataList.length);
 
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
-        if (!__production)
+//        if (!__production)
             console.log('完成 2: '+ lowPriceDataList.length);
 //        console.log(highPriceDataList.length);
 
