@@ -207,6 +207,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             minQuery.find({
                 success: function(results) {
 
+
                     if (isArray(results))
                     {
                         console.log('最低价--需要提醒的人数 : '+results.length);
@@ -259,11 +260,11 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
             //预警最高价
             var maxQuery = new AV.Query(UserFavicon);
-            maxQuery.matchesQuery('coin', coinQuery);
-            maxQuery.equalTo('isPush', true);
-            maxQuery.exists('maxValue');
-            maxQuery.notEqualTo('maxValue', 0);
-            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
+//            maxQuery.matchesQuery('coin', coinQuery);
+//            maxQuery.equalTo('isPush', true);
+//            maxQuery.exists('maxValue');
+//            maxQuery.notEqualTo('maxValue', 0);
+//            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
             maxQuery.include('user');
             maxQuery.include('coin');
 
