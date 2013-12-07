@@ -207,9 +207,8 @@ function alertPush(lowPriceDataList,highPriceDataList){
             minQuery.find({
                 success: function(results) {
 
-
-                    if (isArray(results))
-                    {
+//                    if (isArray(results))
+//                    {
                         console.log('最低价--需要提醒的人数 : '+results.length);
 //                        console.dir(results[0]);
 //                        console.dir(results[0].get('user'));
@@ -238,7 +237,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 }
                             });
                         }
-                    }
+//                    }
                 },
                 error: function(error) {
                     // There was an error.
@@ -260,11 +259,11 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
             //预警最高价
             var maxQuery = new AV.Query(UserFavicon);
-//            maxQuery.matchesQuery('coin', coinQuery);
-//            maxQuery.equalTo('isPush', true);
-//            maxQuery.exists('maxValue');
-//            maxQuery.notEqualTo('maxValue', 0);
-//            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
+            maxQuery.matchesQuery('coin', coinQuery);
+            maxQuery.equalTo('isPush', true);
+            maxQuery.exists('maxValue');
+            maxQuery.notEqualTo('maxValue', 0);
+            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
             maxQuery.include('user');
             maxQuery.include('coin');
 
@@ -273,8 +272,8 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
 //                    console.log('？？？？？？？ : '+results.length);
 
-                    if (isArray(results))
-                    {
+//                    if (isArray(results))
+//                    {
                         console.log('最高价--需要提醒的人数 : '+results.length);
 
                         for (var i=0;i<results.length;++i)
@@ -302,7 +301,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 }
                             });
                         }
-                    }
+//                    }
                 },
                 error: function(error) {
                     // There was an error.
