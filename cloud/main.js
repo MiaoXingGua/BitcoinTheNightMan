@@ -122,7 +122,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                         var lowPrice = parseFloat(resultDataList[0].price);
                         var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
 //
-//                        console.log('low'+lowPrice+'     '+'high'+highPrice);
+                        console.log('low'+lowPrice+'     '+'high'+highPrice);
 
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
@@ -244,7 +244,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 where: installationQuery,
                                 data: {
                                     alert: coin1+"  低价警报 : 赶紧抄底",
-                                    sound: "remind.mp3",
+                                    sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
                                     isHighPrice:false
@@ -308,7 +308,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 where: installationQuery,
                                 data: {
                                     alert: coin1+"  高价警报 : 赶紧抛吧",
-                                    sound: "remind.mp3",
+                                    sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
                                     isHighPrice:true
