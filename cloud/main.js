@@ -114,7 +114,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                     if (resultInfo.result)
                     {
                         var resultDataList = resultInfo.data;
-                        resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?1:-1});
+                        resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?-1:1});
 
 //                        console.dir(resultDataList[0]);
 //                        console.dir(resultDataList[resultDataList.length-1]);
@@ -122,6 +122,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                         var lowPrice = parseFloat(resultDataList[0].price);
                         var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
 //
+//                        console.log('low'+lowPrice+'     '+'high'+highPrice);
+
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
                         if (!__production)
@@ -197,7 +199,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
         for (var i=0;i<lowPriceDataList.length;++i)
         {
             //最低成交价
-            var lowPrice = lowPriceDataList[i].price;
+            var lowPrice = lowPriceDataList[i].price; //4800
             var coin1 = lowPriceDataList[i].coin1;
             var coin2 = lowPriceDataList[i].coin2;
 
@@ -206,7 +208,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             coinQuery.equalTo('coin2', coin2);
 
             //预警最低价
-            var minQuery = new AV.Query(UserFavicon);
+            var minQuery = new AV.Query(UserFavicon);  //4890
             minQuery.matchesQuery('coin', coinQuery);
             minQuery.equalTo('isPush', true);
             minQuery.exists('minValue');
