@@ -77,7 +77,7 @@ function isArray(obj)
 //        console.log('不是数组');
         return false;
     }
-};
+}
 
 var alertRequest = function(requests, coin1,coin2, done)
 {
@@ -235,6 +235,8 @@ var alertPush = function(){
             });
         }
     }
+
+}
 
 }
 
