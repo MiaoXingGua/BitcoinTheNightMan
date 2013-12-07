@@ -138,8 +138,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                     alertPush(lowPriceDataList,highPriceDataList);
 
                 }finally{
-                    lowPriceDataList = [];
-                    highPriceDataList = [];
+//                    lowPriceDataList = [];
+//                    highPriceDataList = [];
                     done();
                 }
 
@@ -162,8 +162,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 					alertPush(lowPriceDataList,highPriceDataList);
 
 				}finally{
-                    lowPriceDataList = [];
-                    highPriceDataList = [];
+//                    lowPriceDataList = [];
+//                    highPriceDataList = [];
 					done();
 				}
             }
