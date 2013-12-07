@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (!__production){
+if (__production){
 
 var lowPriceDataList = [];
 var highPriceDataList = [];
@@ -120,7 +120,7 @@ var alertRequest = function(requests, coin1,coin2, done)
 
                 } catch(error) {
 
-                    console.dir(error);                                   ƒ
+                    console.dir(error);
                 }
 
 //                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
@@ -214,6 +214,8 @@ function alertPush(){
                             var userFavicon = results[i];
                             var coin = userFavicon.get('coin');
                             var coin1 = coin.get('coin1');
+                            var coin2 = coin.get('coin2');
+//                            var minValue = userFavicon.get('minValue');
                             var user = userFavicon.get('user');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
@@ -223,7 +225,11 @@ function alertPush(){
 //                                    channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  低价警报 : 赶紧抄底"
+                                    alert: coin1+"  低价警报 : 赶紧抄底",
+                                    sound: "remind.mp3",
+                                    coin1:coin1,
+                                    coin2:coin2,
+                                    isHighPrice:false
                                 }
                             });
                         }
@@ -271,6 +277,8 @@ function alertPush(){
                             var user = userFavicon.get('user');
                             var coin = userFavicon.get('coin');
                             var coin1 = coin.get('coin1');
+                            var coin2 = coin.get('coin2');
+//                            var maxValue = userFavicon.get('maxValue');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.equalTo('user', userId);
@@ -279,7 +287,11 @@ function alertPush(){
 //                                    channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  高价警报 : 赶紧抛吧"
+                                    alert: coin1+"  高价警报 : 赶紧抛吧",
+                                    sound: "remind.mp3",
+                                    coin1:coin1,
+                                    coin2:coin2,
+                                    isHighPrice:false
                                 }
                             });
                         }
