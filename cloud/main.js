@@ -31,7 +31,7 @@ AV.Cloud.define("hello", function(request, response) {
 
 AV.Cloud.setInterval('coin_alert', 5, function(){
     lock.sync('coin_alert', 15000, function(done){
-        var requests = {}
+        var requests = {};
         var lowPriceDataList = [];
         var highPriceDataList = [];
 
@@ -114,7 +114,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
 
-//                        console.log('增加 : '+ lowPriceDataList.length);
+                        console.log('增加 : '+ lowPriceDataList.length);
 //                        console.log(highPriceDataList.length);
 
                     }
@@ -173,10 +173,13 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 
 function alertPush(lowPriceDataList,highPriceDataList){
 
+    if (!__production)
+        console.log('完成 1: '+ lowPriceDataList.length);
+
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
         if (!__production)
-            console.log('完成 : '+ lowPriceDataList.length);
+            console.log('完成 2: '+ lowPriceDataList.length);
 //        console.log(highPriceDataList.length);
 
         //最低成交价 <= 预警最低价
@@ -292,7 +295,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                     sound: "remind.mp3",
                                     coin1:coin1,
                                     coin2:coin2,
-                                    isHighPrice:false
+                                    isHighPrice:true
                                 }
                             });
                         }
@@ -303,8 +306,6 @@ function alertPush(lowPriceDataList,highPriceDataList){
                 }
             });
         }
-
-
     }
 }
 
