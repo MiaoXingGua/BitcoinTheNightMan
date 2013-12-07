@@ -70,18 +70,18 @@ function isArray(obj)
 
         if (obj.length)
         {
-//            console.log('是长度不为0的数组');
+            console.log('是长度不为0的数组');
             return true;
         }
         else
         {
-//            console.log('长度为0');
+            console.log('长度为0');
             return false;
         }
     }
     else
     {
-//        console.log('不是数组');
+        console.log('不是数组');
         return false;
     }
 }
@@ -271,7 +271,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             maxQuery.find({
                 success: function(results) {
 
-                    console.log('？？？？？？？ : '+results.length);
+//                    console.log('？？？？？？？ : '+results.length);
 
                     if (isArray(results))
                     {
