@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 var lowPriceDataList = [];
 var highPriceDataList = [];
