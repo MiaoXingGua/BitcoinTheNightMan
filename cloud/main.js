@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (!__production){
+if (__production){
 
 var lowPriceDataList = [];
 var highPriceDataList = [];
@@ -32,8 +32,8 @@ AV.Cloud.define("hello", function(request, response) {
 AV.Cloud.setInterval('coin_alert', 5, function(){
     lock.sync('coin_alert', 15000, function(done){
         var requests = {}
-
-        console.log('开始');
+        if (!__production)
+             console.log('开始');
 //        var lowPriceDataList = [];
 //        var highPriceDataList = [];
 
@@ -130,8 +130,8 @@ var alertRequest = function(requests, coin1,coin2, done)
             if (isEmpty(requests))
             {
                 try{
-
-                    console.log('alert reuqest is done.');
+                    if (!__production)
+                        console.log('alert reuqest is done.');
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
                     alertPush();
@@ -154,7 +154,8 @@ var alertRequest = function(requests, coin1,coin2, done)
             if (isEmpty(requests))
             {
                 try{
-                    console.log('alert reuqest is done.');
+                    if (!__production)
+                        console.log('alert reuqest is done.');
 //                    console.log('完成0 : '+ lowPriceDataList.length);
 
 					alertPush();
@@ -173,7 +174,8 @@ function alertPush(){
 
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
-        console.log('完成 : '+ lowPriceDataList.length);
+        if (!__production)
+            console.log('完成 : '+ lowPriceDataList.length);
 //        console.log(highPriceDataList.length);
 
         //最低成交价 <= 预警最低价
