@@ -124,7 +124,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                         var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
                         var highDate = resultDataList[resultDataList.length-1].date;
 
-                        console.log('low'+lowPrice+'     '+'high'+highPrice);
+                        if (!__production)
+                            console.log('low'+lowPrice+'     '+'high'+highPrice);
 
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate});
