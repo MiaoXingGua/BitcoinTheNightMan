@@ -120,12 +120,14 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 //                        console.dir(resultDataList[resultDataList.length-1]);
 
                         var lowPrice = parseFloat(resultDataList[0].price);
+                        var lowDate = resultDataList[0].date;
                         var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
-//
+                        var highDate = resultDataList[resultDataList.length-1].date;
+
                         console.log('low'+lowPrice+'     '+'high'+highPrice);
 
-                        lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2});
-                        highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2});
+                        lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate});
+                        highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate});
                         if (!__production)
                              console.log('增加 : '+ lowPriceDataList.length);
 //                        console.log(highPriceDataList.length);
@@ -202,6 +204,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
             var lowPrice = lowPriceDataList[i].price; //4800
             var coin1 = lowPriceDataList[i].coin1;
             var coin2 = lowPriceDataList[i].coin2;
+//            var lowDate = lowPriceDataList[i].date;
 
             var coinQuery = new AV.Query(Coin);
             coinQuery.equalTo('coin1', coin1);
@@ -233,7 +236,8 @@ function alertPush(lowPriceDataList,highPriceDataList){
                             var coin = userFavicon.get('coin');
                             var coin1 = coin.get('coin1');
                             var coin2 = coin.get('coin2');
-//                            var minValue = userFavicon.get('minValue');
+                            var coin2 = coin.get('coin2');
+                            var minValue = userFavicon.get('minValue');
                             var user = userFavicon.get('user');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
@@ -243,11 +247,12 @@ function alertPush(lowPriceDataList,highPriceDataList){
 //                                    channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  低价警报 : 赶紧抄底",
+                                    alert: coin1+"  低于: "+ minValue +"元  赶紧抄底！",
                                     sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
-                                    isHighPrice:false
+                                    isHighPrice:false,
+                                    minValue:minValue
                                 }
                             });
                         }
@@ -298,7 +303,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                             var coin = userFavicon.get('coin');
                             var coin1 = coin.get('coin1');
                             var coin2 = coin.get('coin2');
-//                            var maxValue = userFavicon.get('maxValue');
+                            var maxValue = userFavicon.get('maxValue');
                             var userId = AV.Object.createWithoutData("_User", user.id);
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.equalTo('user', userId);
@@ -307,11 +312,12 @@ function alertPush(lowPriceDataList,highPriceDataList){
 //                                    channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  高价警报 : 赶紧抛吧",
+                                    alert: coin1+"  高于: "+ maxValue +"元  赶紧抛吧！",
                                     sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
-                                    isHighPrice:true
+                                    isHighPrice:true,
+                                    maxValue:maxValue
                                 }
                             });
                         }
@@ -400,6 +406,53 @@ if (__production)
 
             }
     }
+}
+
+
+if (!__production)
+{
+    AV.Cloud.define("get_sign", function(request, response) {
+
+        var key = request.params.key;
+        var secret = request.params.secret;
+        var postData = request.params.postData;
+
+        var hash = crypto.createHmac('sha512', secret);
+        hash.update(postData);
+        var hashed_data = hash.digest();
+
+        AV.Cloud.httpRequest({
+            method: 'POST',
+//        secureProtocol : 'SSLv2_method',
+            url: 'https://app.cloopen.com:8883/2013-03-22/Accounts/aaf98f894032b237014047963bb9009d/SubAccounts?sig='+sig.toUpperCase(),
+            headers: {
+                'KEY': key,
+                'SIGN': hashed_data
+            },
+            body: bodyxml,
+            success:function(httpResponse) {
+
+                parseString(httpResponse.text, function (error, result) {
+
+                    if (result)
+                    {
+                        cloopen2avos(request, response, user, result);
+                    }
+                    else
+                    {
+                        response.error('Request failed with response code ' + error);
+                    }
+                });
+
+            },
+            error:function(httpResponse) {
+
+                console.error('Request failed with response code : ' + httpResponse.text);
+                response.error('Request failed with response code : ' + httpResponse.status);
+            }
+        });
+
+    });
 }
 
 
