@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -81,18 +81,21 @@ function isArray(obj)
 
         if (obj.length)
         {
-            console.log('是长度不为0的数组');
+            if (!__production)
+                console.log('是长度不为0的数组');
             return true;
         }
         else
         {
-            console.log('长度为0');
+            if (!__production)
+                console.log('长度为0');
             return false;
         }
     }
     else
     {
-        console.log('不是数组');
+        if (!__production)
+            console.log('不是数组');
         return false;
     }
 }
@@ -129,6 +132,7 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 
                         lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate});
                         highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate});
+
                         if (!__production)
                              console.log('增加 : '+ lowPriceDataList.length);
 //                        console.log(highPriceDataList.length);
@@ -205,7 +209,6 @@ function alertPush(lowPriceDataList,highPriceDataList){
             var lowPrice = lowPriceDataList[i].price; //4800
             var coin1 = lowPriceDataList[i].coin1;
             var coin2 = lowPriceDataList[i].coin2;
-//            var lowDate = lowPriceDataList[i].date;
 
             var coinQuery = new AV.Query(Coin);
             coinQuery.equalTo('coin1', coin1);
@@ -226,24 +229,29 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
 //                    if (isArray(results))
 //                    {
-//                        console.log('最低价--需要提醒的人数 : '+results.length);
-
-//                        console.dir(results[0]);
-//                        console.dir(results[0].get('user'));
-
+                    if (results.length)
+                    {
+                        var userList = [];
                         for (var i=0;i<results.length;++i)
                         {
                             var userFavicon = results[i];
-                            var coin = userFavicon.get('coin');
-                            var coin1 = coin.get('coin1');
-                            var coin2 = coin.get('coin2');
-                            var coin2 = coin.get('coin2');
-                            var minValue = userFavicon.get('minValue');
                             var user = userFavicon.get('user');
                             var userId = AV.Object.createWithoutData("_User", user.id);
+                            userList.push(userId);
+                        }
+
+                        console.log('最低价--需要提醒的人数 : '+userList.length);
+
+                        if (userList.length)
+                        {
                             var installationQuery = new AV.Query(Installation);
-                            installationQuery.equalTo('user', userId);
-//
+                            installationQuery.containedIn('user',userList);
+
+                            var coin = results[0].get('coin');
+                            var coin1 = coin.get('coin1');
+                            var coin2 = coin.get('coin2');
+                            var minValue = userFavicon.get('minValue');
+
                             AV.Push.send({
 //                                    channels: [ "Public" ],
                                 where: installationQuery,
@@ -257,6 +265,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 }
                             });
                         }
+                    }
 //                    }
                 },
                 error: function(error) {
@@ -296,21 +305,31 @@ function alertPush(lowPriceDataList,highPriceDataList){
 //                    {
 //                        console.log('最高价--需要提醒的人数 : '+results.length);
 
+                    if (results.length)
+                    {
+                        var userList = [];
                         for (var i=0;i<results.length;++i)
                         {
                             var userFavicon = results[i];
-//                            console.dir(userFavicon);
                             var user = userFavicon.get('user');
-                            var coin = userFavicon.get('coin');
+                            var userId = AV.Object.createWithoutData("_User", user.id);
+                            userList.push(userId);
+                        }
+
+                        console.log('最高价--需要提醒的人数 : '+userList.length);
+
+                        if (userList.length)
+                        {
+                            var installationQuery = new AV.Query(Installation);
+                            installationQuery.containedIn('user',userList);
+
+                            var coin = results[0].get('coin');
                             var coin1 = coin.get('coin1');
                             var coin2 = coin.get('coin2');
                             var maxValue = userFavicon.get('maxValue');
-                            var userId = AV.Object.createWithoutData("_User", user.id);
-                            var installationQuery = new AV.Query(Installation);
-                            installationQuery.equalTo('user', userId);
 
                             AV.Push.send({
-//                                    channels: [ "Public" ],
+//                      channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
                                     alert: coin1+"  高于: "+ maxValue +"元  赶紧抛吧！",
@@ -322,6 +341,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
                                 }
                             });
                         }
+                    }
 //                    }
                 },
                 error: function(error) {
