@@ -13,7 +13,7 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc'];
+var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
 
 //jry bsc trc
 
