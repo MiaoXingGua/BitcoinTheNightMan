@@ -103,6 +103,7 @@ function isArray(obj)
 function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2, done)
 {
     var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+//    console.log(url);
     AV.Cloud.httpRequest({
         url: url,
         success: function(httpResponse) {
@@ -112,6 +113,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                 var resultInfo;
                 try {
                     resultInfo = JSON.parse(httpResponse.text);
+
+//                    resultInfo = JSON.parse(httpResponse.buffer.toString());
 
                     //推送
                     if (resultInfo.result)
@@ -239,10 +242,12 @@ function alertPush(lowPriceDataList,highPriceDataList){
                             userList.push(userId);
                         }
 
-                        console.log('最低价--需要提醒的人数 : '+userList.length);
+
 
                         if (userList.length)
                         {
+                            console.log('最低价--需要提醒的人数 : '+userList.length);
+
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.containedIn('user',userList);
 
@@ -315,10 +320,10 @@ function alertPush(lowPriceDataList,highPriceDataList){
                             userList.push(userId);
                         }
 
-                        console.log('最高价--需要提醒的人数 : '+userList.length);
-
                         if (userList.length)
                         {
+                            console.log('最高价--需要提醒的人数 : '+userList.length);
+
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.containedIn('user',userList);
 
