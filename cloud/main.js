@@ -200,7 +200,7 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
     if (isArray(lowPriceDataList) && isArray(highPriceDataList))
     {
-//        if (!__production)
+        if (!__production)
             console.log('完成 2: '+ lowPriceDataList.length);
 //        console.log(highPriceDataList.length);
 
