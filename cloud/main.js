@@ -15,6 +15,7 @@ var RequestController = AV.Object.extend('RequestController');
 
 var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
 
+var verNo = "1.0.1";
 //jry bsc trc
 
 var coin2List = ['cny'];
@@ -395,6 +396,20 @@ if (__production)
         }
         return guid;
     }
+
+//版本验证       version
+AV.Cloud.define('version', function(request, response) {
+
+     if (verNo == request.params.verNo)
+     {
+         response.success(true);
+     }
+     else
+     {
+         response.success(false);
+     }
+
+});
 
 //Phone注册
     AV.Cloud.define('register', function(request, response) {
