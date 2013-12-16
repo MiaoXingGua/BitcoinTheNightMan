@@ -20,7 +20,7 @@ var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','i
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -167,7 +167,8 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
 
             }
         },
-        error: function(httpResponse) {
+        error: function() {
+
             if(requests[coin1])
             {
 //                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
@@ -179,7 +180,6 @@ function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2
                 try{
 
 //                    console.log('完成0 : '+ lowPriceDataList.length);
-
 					alertPush(lowPriceDataList,highPriceDataList);
 
 				}finally{
@@ -244,12 +244,35 @@ function alertPush(lowPriceDataList,highPriceDataList){
 
 
 
+
                         if (userList.length)
                         {
                             console.log('最低价--需要提醒的人数 : '+userList.length);
-
+                                                                 console.dir(userList);
                             var installationQuery = new AV.Query(Installation);
                             installationQuery.containedIn('user',userList);
+
+//                            installationQuery.equalTo('user',userList[0]);
+//                            for (var i=1;i<userList.length;++i)
+//                            {
+//                                console.log('多人');
+//                                var subQ = new AV.Query(Installation);
+//                                subQ.equalTo('user',userList[i]);
+//                                installationQuery.or(subQ);
+//                            }
+
+
+//                            installationQuery.find({
+//                                success: function(results) {
+//                                    // list contains the posts that the current user likes.
+//                                    console.log('最低价--找到设备数 : '+results.length);
+//                                } ,
+//                                error: function(error){
+//
+//                                    console.log('最低价--没有找到设备');
+//                                }
+//                            });
+
 
                             var coin = results[0].get('coin');
                             var coin1 = coin.get('coin1');
