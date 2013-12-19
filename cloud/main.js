@@ -21,7 +21,7 @@ var verNo = "1.2";
 var coin2List = ['cny'];
 
 
-if (!__production){
+if (__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -397,21 +397,21 @@ if (__production)
         return guid;
     }
 
-//版本验证       version
-AV.Cloud.define('version', function(request, response) {
+    //版本验证       version
+    AV.Cloud.define('version', function(request, response) {
 
-     if (verNo == request.params.verNo)
-     {
-         response.success(true);
-     }
-     else
-     {
-         response.success(false);
-     }
+         if (verNo == request.params.verNo)
+         {
+             response.success(true);
+         }
+         else
+         {
+             response.success(false);
+         }
 
-});
+    });
 
-//Phone注册
+    //Phone注册
     AV.Cloud.define('register', function(request, response) {
 
         console.log('注册');
