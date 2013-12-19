@@ -15,7 +15,7 @@ var RequestController = AV.Object.extend('RequestController');
 
 var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
 
-var verNo = "1.2";
+var verNo = "1.3";
 //jry bsc trc
 
 var coin2List = ['cny'];
