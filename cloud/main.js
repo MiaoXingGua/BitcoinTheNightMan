@@ -21,7 +21,7 @@ var verNo = "1.3";
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
