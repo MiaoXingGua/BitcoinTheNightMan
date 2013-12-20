@@ -21,7 +21,7 @@ var verNo = "1.3";
 var coin2List = ['cny'];
 
 
-if (__production){
+if (!__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -101,286 +101,336 @@ function isArray(obj)
     }
 }
 
-function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2, done)
-{
-    var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
-//    console.log(url);
-    AV.Cloud.httpRequest({
-        url: url,
-        success: function(httpResponse) {
-
-            if(requests[coin1])
-            {
-                var resultInfo;
-                try {
-                    resultInfo = JSON.parse(httpResponse.text);
-
-//                    resultInfo = JSON.parse(httpResponse.buffer.toString());
-
-                    //推送
-                    if (resultInfo.result)
-                    {
-                        var resultDataList = resultInfo.data;
-                        resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?-1:1});
-
-//                        console.dir(resultDataList[0]);
-//                        console.dir(resultDataList[resultDataList.length-1]);
-
-                        var lowPrice = parseFloat(resultDataList[0].price);
-                        var lowDate = resultDataList[0].date;
-                        var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
-                        var highDate = resultDataList[resultDataList.length-1].date;
-
-                        if (!__production)
-                            console.log('low'+lowPrice+'     '+'high'+highPrice);
-
-                        lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate});
-                        highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate});
-
-                        if (!__production)
-                             console.log('增加 : '+ lowPriceDataList.length);
-//                        console.log(highPriceDataList.length);
-
-                    }
-
-                } catch(error) {
-
-                    console.dir(error);
-                }
-
-//                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
-                delete requests[coin1];
-            }
-
-            if (isEmpty(requests))
-            {
-                try{
-
-//                    console.log('完成0 : '+ lowPriceDataList.length);
-                    alertPush(lowPriceDataList,highPriceDataList);
-
-                }finally{
-//                    lowPriceDataList = [];
-//                    highPriceDataList = [];
-                    console.log('alert reuqest is done.');
-                    done();
-                }
-
-            }
-        },
-        error: function() {
-
-            if(requests[coin1])
-            {
-//                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
-                delete requests[coin1];
-            }
-
-            if (isEmpty(requests))
-            {
-                try{
-
-//                    console.log('完成0 : '+ lowPriceDataList.length);
-					alertPush(lowPriceDataList,highPriceDataList);
-
-				}finally{
-//                    lowPriceDataList = [];
-//                    highPriceDataList = [];
-                    console.log('alert reuqest is done.');
-					done();
-				}
-            }
-        }
-    });
-}
-
-function alertPush(lowPriceDataList,highPriceDataList){
-
-    if (!__production)
-        console.log('完成 1: '+ lowPriceDataList.length);
-
-    if (isArray(lowPriceDataList) && isArray(highPriceDataList))
+    function alertRequest(requests, lowPriceDataList, highPriceDataList, coin1,coin2, done)
     {
-        if (!__production)
-            console.log('完成 2: '+ lowPriceDataList.length);
-//        console.log(highPriceDataList.length);
+        var url = 'http://cn.bter.com/api/1/trade/'+coin1+'_'+coin2;
+    //    console.log(url);
+        AV.Cloud.httpRequest({
+            url: url,
+            success: function(httpResponse) {
 
-        //最低成交价 <= 预警最低价
-        for (var i=0;i<lowPriceDataList.length;++i)
-        {
-            //最低成交价
-            var lowPrice = lowPriceDataList[i].price; //4800
-            var coin1 = lowPriceDataList[i].coin1;
-            var coin2 = lowPriceDataList[i].coin2;
+                if(requests[coin1])
+                {
+                    var resultInfo;
+                    try {
+                        resultInfo = JSON.parse(httpResponse.text);
 
-            var coinQuery = new AV.Query(Coin);
-            coinQuery.equalTo('coin1', coin1);
-            coinQuery.equalTo('coin2', coin2);
+    //                    resultInfo = JSON.parse(httpResponse.buffer.toString());
 
-            //预警最低价
-            var minQuery = new AV.Query(UserFavicon);  //4890
-            minQuery.matchesQuery('coin', coinQuery);
-            minQuery.equalTo('isPush', true);
-            minQuery.exists('minValue');
-            minQuery.greaterThan('minValue', 0);
-            minQuery.greaterThanOrEqualTo("minValue", lowPrice);
-            minQuery.include('user');
-            minQuery.include('coin');
-
-            minQuery.find({
-                success: function(results) {
-
-//                    if (isArray(results))
-//                    {
-                    if (results.length)
-                    {
-                        var userList = [];
-                        for (var i=0;i<results.length;++i)
+                        if (resultInfo.result)
                         {
-                            var userFavicon = results[i];
-                            var user = userFavicon.get('user');
-                            var userId = AV.Object.createWithoutData("_User", user.id);
-                            userList.push(userId);
+                            //二次请求
+                            var resultDataList = resultInfo.data;
+
+                            var lastTid = resultDataList[resultDataList.length-1].tid;
+                            console.log('tid0 : '+lastTid);
+
+                            var url2 = url + '/' + lastTid;
+
+                            AV.Cloud.httpRequest({
+                                url: url2,
+                                success: function(httpResponse) {
+
+                                    var resultInfo ;
+                                    try{
+                                        resultInfo = JSON.parse(httpResponse.text);
+
+                                        if (resultInfo.result)
+                                        {
+                                            //推送
+
+                                            var resultDataList = resultInfo.data;
+//                                            console.dir(resultInfo.data);
+//                                            resultDataList.sort(function(data1,data2){return parseFloat(data1.tid)<parseFloat(data2.tid)?-1:1});
+//                                            console.log(resultDataList.length);
+                                            console.log('tid1 : '+resultDataList[resultDataList.length-1].tid);
+//
+                                            resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?-1:1});
+
+                                            //                        console.dir(resultDataList[0]);
+                                            //                        console.dir(resultDataList[resultDataList.length-1]);
+
+                                            var lowPrice = parseFloat(resultDataList[0].price);
+                                            var lowDate = resultDataList[0].date;
+                                            var lowTid = resultDataList[0].tid;
+
+                                            var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
+                                            var highDate = resultDataList[resultDataList.length-1].date;
+                                            var highTid = resultDataList[resultDataList.length-1].tid;
+
+                                            if (!__production)
+                                                console.log('low'+lowPrice+'     '+'high'+highPrice);
+
+                                            lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate,'tid':lowTid});
+                                            highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate,'tid':highTid});
+
+                                            if (!__production)
+                                                console.log('增加 : '+ lowPriceDataList.length);
+
+                                            delete requests[coin1];
+
+                                            if (isEmpty(requests))
+                                            {
+                                                try{
+
+                                                    //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                                    alertPush(lowPriceDataList,highPriceDataList);
+
+                                                }finally{
+                                                    //                    lowPriceDataList = [];
+                                                    //                    highPriceDataList = [];
+                                                    console.log('alert reuqest is done.');
+                                                    done();
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                    catch (error){
+
+                                        console.dir(error);
+                                    }
+
+                                },
+                                error: function(error){
+
+                                }
+                            });
                         }
 
+                    } catch(error) {
+
+                        console.dir(error);
+                    }
+
+    //                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
+
+                }
 
 
+            },
+            error: function() {
 
-                        if (userList.length)
+                if(requests[coin1])
+                {
+    //                console.log('失败'+ coin1 + '_' + coin2 +'剩余 ：' + length(requests));
+                    delete requests[coin1];
+
+                    if (isEmpty(requests))
+                    {
+                        try{
+
+                            //                    console.log('完成0 : '+ lowPriceDataList.length);
+                            alertPush(lowPriceDataList,highPriceDataList);
+
+                        }finally{
+                            //                    lowPriceDataList = [];
+                            //                    highPriceDataList = [];
+                            console.log('alert reuqest is done.');
+                            done();
+                        }
+                    }
+                }
+
+
+            }
+        });
+    }
+
+    function queryQueue(query,priceData,type){
+
+    var coin1 = priceData.coin1;
+    var coin2 = priceData.coin2;
+    var date = priceData.date;
+    var tid = priceData.tid;
+    var price = priceData.price;
+
+    query.find(
+        {
+            success:function(results){
+
+                if (results.length)
+                {
+                    var userList = [];
+                    for (var i=0;i<results.length;++i)
+                    {
+                        var userFavicon = results[i];
+                        var user = userFavicon.get('user');
+                        var userId = AV.Object.createWithoutData("_User", user.id);
+                        userList.push(userId);
+                    }
+
+                    if (userList.length)
+                    {
+                        if (!__production)
+                            console.log(type + ' : 需要提醒的人数 : '+userList.length);
+
+                        var installationQuery = new AV.Query(Installation);
+                        installationQuery.containedIn('user',userList);
+
+                        if (type == 'low')
                         {
-                            console.log('最低价--需要提醒的人数 : '+userList.length);
-                                                                 console.dir(userList);
-                            var installationQuery = new AV.Query(Installation);
-                            installationQuery.containedIn('user',userList);
-
-//                            installationQuery.equalTo('user',userList[0]);
-//                            for (var i=1;i<userList.length;++i)
-//                            {
-//                                console.log('多人');
-//                                var subQ = new AV.Query(Installation);
-//                                subQ.equalTo('user',userList[i]);
-//                                installationQuery.or(subQ);
-//                            }
-
-
-//                            installationQuery.find({
-//                                success: function(results) {
-//                                    // list contains the posts that the current user likes.
-//                                    console.log('最低价--找到设备数 : '+results.length);
-//                                } ,
-//                                error: function(error){
-//
-//                                    console.log('最低价--没有找到设备');
-//                                }
-//                            });
-
-
-                            var coin = results[0].get('coin');
-                            var coin1 = coin.get('coin1');
-                            var coin2 = coin.get('coin2');
-                            var minValue = userFavicon.get('minValue');
-
+                            if (!__production)
+                                console.log('需要提醒的交易 : tid = ' + tid + ' date = ' + date + ' price = ' +price);
                             AV.Push.send({
-//                                    channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  低于: "+ minValue +"元  赶紧抄底！",
+                                    alert: coin1+' 低价预警: ' +price+ ' 赶紧抄底！',
                                     sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
                                     isHighPrice:false,
-                                    minValue:minValue
+                                    price:price
                                 }
                             });
                         }
-                    }
-//                    }
-                },
-                error: function(error) {
-                    // There was an error.
-                }
-            });
-        }
 
-        //预警最高价 <=  最高成交价
-        for (var i=0;i<highPriceDataList.length;++i)
-        {
-            //最高成交价
-            var highPrice = highPriceDataList[i].price;
-            var coin1 = highPriceDataList[i].coin1;
-            var coin2 = highPriceDataList[i].coin2;
-
-            var coinQuery = new AV.Query(Coin);
-            coinQuery.equalTo('coin1', coin1);
-            coinQuery.equalTo('coin2', coin2);
-
-            //预警最高价
-            var maxQuery = new AV.Query(UserFavicon);
-            maxQuery.matchesQuery('coin', coinQuery);
-            maxQuery.equalTo('isPush', true);
-            maxQuery.exists('maxValue');
-            maxQuery.greaterThan('maxValue', 0);
-            maxQuery.lessThanOrEqualTo('maxValue', highPrice);
-            maxQuery.include('user');
-            maxQuery.include('coin');
-
-            maxQuery.find({
-                success: function(results) {
-
-//                    console.log('？？？？？？？ : '+results.length);
-
-//                    if (isArray(results))
-//                    {
-//                        console.log('最高价--需要提醒的人数 : '+results.length);
-
-                    if (results.length)
-                    {
-                        var userList = [];
-                        for (var i=0;i<results.length;++i)
+                        if (type == 'high')
                         {
-                            var userFavicon = results[i];
-                            var user = userFavicon.get('user');
-                            var userId = AV.Object.createWithoutData("_User", user.id);
-                            userList.push(userId);
-                        }
-
-                        if (userList.length)
-                        {
-                            console.log('最高价--需要提醒的人数 : '+userList.length);
-
-                            var installationQuery = new AV.Query(Installation);
-                            installationQuery.containedIn('user',userList);
-
-                            var coin = results[0].get('coin');
-                            var coin1 = coin.get('coin1');
-                            var coin2 = coin.get('coin2');
-                            var maxValue = userFavicon.get('maxValue');
-
+                            if (!__production)
+                                console.log('需要提醒的交易 : tid = ' + tid + 'date = ' + date + ' price = ' +price);
                             AV.Push.send({
-//                      channels: [ "Public" ],
                                 where: installationQuery,
                                 data: {
-                                    alert: coin1+"  高于: "+ maxValue +"元  赶紧抛吧！",
+                                    alert: coin1+' 高价预警: ' +price+ ' 赶紧抛吧！',
                                     sound: "remind.mp4",
                                     coin1:coin1,
                                     coin2:coin2,
                                     isHighPrice:true,
-                                    maxValue:maxValue
+                                    price:price
                                 }
                             });
                         }
+
                     }
-//                    }
-                },
-                error: function(error) {
-                    // There was an error.
                 }
-            });
+
+            },
+            error:function(error){
+
+            }
         }
-    }
+    );
 }
 
+    function alertPush(lowPriceDataList,highPriceDataList){
+
+        if (!__production)
+            console.log('完成 1: '+ lowPriceDataList.length);
+
+        if (isArray(lowPriceDataList) && isArray(highPriceDataList))
+        {
+            if (!__production)
+                console.log('完成 2: '+ lowPriceDataList.length);
+
+            //最低成交价 <= 预警最低价
+            for (var i=0;i<lowPriceDataList.length;++i)
+            {
+                //最低成交价
+                var lowPrice = lowPriceDataList[i].price; //4800
+                var coin1 = lowPriceDataList[i].coin1;
+                var coin2 = lowPriceDataList[i].coin2;
+
+                var coinQuery = new AV.Query(Coin);
+                coinQuery.equalTo('coin1', coin1);
+                coinQuery.equalTo('coin2', coin2);
+
+                //预警最低价
+                var minQuery = new AV.Query(UserFavicon);  //4890
+                minQuery.matchesQuery('coin', coinQuery);
+                minQuery.equalTo('isPush', true);
+                minQuery.exists('minValue');
+                minQuery.greaterThan('minValue', 0);
+                minQuery.greaterThanOrEqualTo("minValue", lowPrice);
+                minQuery.include('user');
+                minQuery.include('coin');
+
+                queryQueue(minQuery,lowPriceDataList[i],'low');
+            }
+
+            //预警最高价 <=  最高成交价
+            for (var i=0;i<highPriceDataList.length;++i)
+            {
+                //最高成交价
+                var highPrice = highPriceDataList[i].price;
+                var coin1 = highPriceDataList[i].coin1;
+                var coin2 = highPriceDataList[i].coin2;
+
+                var coinQuery = new AV.Query(Coin);
+                coinQuery.equalTo('coin1', coin1);
+                coinQuery.equalTo('coin2', coin2);
+
+                //预警最高价
+                var maxQuery = new AV.Query(UserFavicon);
+                maxQuery.matchesQuery('coin', coinQuery);
+                maxQuery.equalTo('isPush', true);
+                maxQuery.exists('maxValue');
+                maxQuery.greaterThan('maxValue', 0);
+                maxQuery.lessThanOrEqualTo('maxValue', highPrice);
+                maxQuery.include('user');
+                maxQuery.include('coin');
+
+                queryQueue(maxQuery,highPriceDataList[i],'high');
+
+    //            maxQuery.find({
+    //                success: function(results) {
+    //
+    ////                    console.log('？？？？？？？ : '+results.length);
+    //
+    ////                    if (isArray(results))
+    ////                    {
+    ////                        console.log('最高价--需要提醒的人数 : '+results.length);
+    //
+    //                    if (results.length)
+    //                    {
+    //                        var userList = [];
+    //                        for (var i=0;i<results.length;++i)
+    //                        {
+    //                            var userFavicon = results[i];
+    //                            var user = userFavicon.get('user');
+    //                            var userId = AV.Object.createWithoutData("_User", user.id);
+    //                            userList.push(userId);
+    //                        }
+    //
+    //                        if (userList.length)
+    //                        {
+    //                            if (!__production)
+    //                                console.log('最高价--需要提醒的人数 : '+userList.length);
+    //
+    //                            var installationQuery = new AV.Query(Installation);
+    //                            installationQuery.containedIn('user',userList);
+    //
+    //                            var coin = results[0].get('coin');
+    //                            var coin1 = coin.get('coin1');
+    //                            var coin2 = coin.get('coin2');
+    //                            var maxValue = userFavicon.get('maxValue');
+    //
+    //                            AV.Push.send({
+    ////                      channels: [ "Public" ],
+    //                                where: installationQuery,
+    //                                data: {
+    //                                    alert: coin1+"  高于: "+ maxValue +"元  赶紧抛吧！",
+    //                                    sound: "remind.mp4",
+    //                                    coin1:coin1,
+    //                                    coin2:coin2,
+    //                                    isHighPrice:true,
+    //                                    maxValue:maxValue
+    //                                }
+    //                            });
+    //                        }
+    //                    }
+    ////                    }
+    //                },
+    //                error: function(error) {
+    //                    // There was an error.
+    //                }
+    //            });
+            }
+        }
+    }
+
 }
+
 
 if (__production)
 {
