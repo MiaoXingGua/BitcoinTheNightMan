@@ -15,13 +15,17 @@ var RequestController = AV.Object.extend('RequestController');
 
 var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
 
-var verNo = "1.3";
+if (__production)
+{
+    var verNo = "1.3";
+}
+
 //jry bsc trc
 
 var coin2List = ['cny'];
 
 
-if (!__production){
+if (__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
@@ -123,7 +127,8 @@ function isArray(obj)
                             var resultDataList = resultInfo.data;
 
                             var lastTid = resultDataList[resultDataList.length-1].tid;
-                            console.log('tid0 : '+lastTid);
+                            if (!__production)
+                                console.log('tid0 : '+lastTid);
 
                             var url2 = url + '/' + lastTid;
 
@@ -143,7 +148,9 @@ function isArray(obj)
 //                                            console.dir(resultInfo.data);
 //                                            resultDataList.sort(function(data1,data2){return parseFloat(data1.tid)<parseFloat(data2.tid)?-1:1});
 //                                            console.log(resultDataList.length);
-                                            console.log('tid1 : '+resultDataList[resultDataList.length-1].tid);
+                                            if (!__production)
+                                                console.log('tid1 : '+resultDataList[resultDataList.length-1].tid);
+
 //
                                             resultDataList.sort(function(data1,data2){return parseFloat(data1.price)<parseFloat(data2.price)?-1:1});
 
@@ -185,22 +192,108 @@ function isArray(obj)
 
                                             }
                                         }
+                                        else
+                                        {
+                                            delete requests[coin1];
+
+                                            if (isEmpty(requests))
+                                            {
+                                                try{
+
+                                                    //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                                    alertPush(lowPriceDataList,highPriceDataList);
+
+                                                }finally{
+                                                    //                    lowPriceDataList = [];
+                                                    //                    highPriceDataList = [];
+                                                    console.log('alert reuqest is done.');
+                                                    done();
+                                                }
+                                            }
+                                        }
                                     }
                                     catch (error){
 
                                         console.dir(error);
+                                        delete requests[coin1];
+
+                                        if (isEmpty(requests))
+                                        {
+                                            try{
+
+                                                //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                                alertPush(lowPriceDataList,highPriceDataList);
+
+                                            }finally{
+                                                //                    lowPriceDataList = [];
+                                                //                    highPriceDataList = [];
+                                                console.log('alert reuqest is done.');
+                                                done();
+                                            }
+                                        }
                                     }
 
                                 },
                                 error: function(error){
+                                    delete requests[coin1];
 
+                                    if (isEmpty(requests))
+                                    {
+                                        try{
+
+                                            //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                            alertPush(lowPriceDataList,highPriceDataList);
+
+                                        }finally{
+                                            //                    lowPriceDataList = [];
+                                            //                    highPriceDataList = [];
+                                            console.log('alert reuqest is done.');
+                                            done();
+                                        }
+                                    }
                                 }
                             });
+                        }
+                        else
+                        {
+                            delete requests[coin1];
+
+                            if (isEmpty(requests))
+                            {
+                                try{
+
+                                    //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                    alertPush(lowPriceDataList,highPriceDataList);
+
+                                }finally{
+                                    //                    lowPriceDataList = [];
+                                    //                    highPriceDataList = [];
+                                    console.log('alert reuqest is done.');
+                                    done();
+                                }
+                            }
                         }
 
                     } catch(error) {
 
                         console.dir(error);
+
+                        delete requests[coin1];
+
+                        if (isEmpty(requests))
+                        {
+                            try{
+
+                                //                    console.log('完成0 : '+ lowPriceDataList.length);
+                                alertPush(lowPriceDataList,highPriceDataList);
+
+                            }finally{
+                                //                    lowPriceDataList = [];
+                                //                    highPriceDataList = [];
+                                console.log('alert reuqest is done.');
+                                done();
+                            }
+                        }
                     }
 
     //                console.log('成功'+ coin1 + '_' + coin2 +'剩余 ：' +  length(requests));
@@ -288,7 +381,7 @@ function isArray(obj)
                         if (type == 'high')
                         {
                             if (!__production)
-                                console.log('需要提醒的交易 : tid = ' + tid + 'date = ' + date + ' price = ' +price);
+                                console.log('需要提醒的交易 : tid = ' + tid + ' date = ' + date + ' price = ' +price);
                             AV.Push.send({
                                 where: installationQuery,
                                 data: {
