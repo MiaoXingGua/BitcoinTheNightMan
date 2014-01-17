@@ -24,7 +24,7 @@ if (__production)
 
 var coin2List = ['cny'];
 
-if (!__production){
+if (__production){
 
 //var lowPriceDataList = [];
 //var highPriceDataList = [];
