@@ -13,7 +13,7 @@ var DepthHistory = AV.Object.extend('DepthHistory');
 var Coin = AV.Object.extend('Coin');
 var RequestController = AV.Object.extend('RequestController');
 
-var coin1List = ['btc','btb','bqc','cnc','cent','cmc','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
+var coin1List = ['btc','btb','bqc','cnc','cent','cmc','doge','dtc','exc','ftc','frc','ifc','ltc','mec','nmc','ppc','pts','qrk','red','src','tag','tix','wdc','xpm','yac','zcc','zet'];
 
 if (__production)
 {
@@ -129,17 +129,17 @@ if (!__production){
                             var lowPrice = parseFloat(resultDataList[0].price);
                             var lowDate = resultDataList[0].date;
                             var lowTid = resultDataList[0].tid;
-//
+
                             var highPrice = parseFloat(resultDataList[resultDataList.length-1].price);
                             var highDate = resultDataList[resultDataList.length-1].date;
                             var highTid = resultDataList[resultDataList.length-1].tid;
 
                             lowPriceDataList.push({'price':lowPrice,'coin1':coin1,'coin2':coin2,'date':lowDate,'tid':lowTid});
                             highPriceDataList.push({'price':highPrice,'coin1':coin1,'coin2':coin2,'date':highDate,'tid':highTid});
-//
+
                             if (!__production)
                                 console.log('增加 : '+ lowPriceDataList.length);
-//
+
                             delete requests[coin1];
 
                             if (isEmpty(requests))
@@ -156,7 +156,6 @@ if (!__production){
                                 alertPush(lowPriceDataList,highPriceDataList,done);
                             }
                         }
-
                     }
                     catch(error) {
 
@@ -166,17 +165,7 @@ if (!__production){
 
                         if (isEmpty(requests))
                         {
-//                            try{
-
-                            //                    console.log('完成0 : '+ lowPriceDataList.length);
                             alertPush(lowPriceDataList,highPriceDataList,done);
-
-//                            }finally{
-//                                //                    lowPriceDataList = [];
-//                                //                    highPriceDataList = [];
-//                                console.log('alert reuqest is done.');
-//                                done();
-//                            }
                         }
                     }
                 }
